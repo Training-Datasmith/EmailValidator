@@ -18,7 +18,7 @@ class RFCValidation implements EmailValidation
     /**
      * @var ?InvalidEmail
      */
-    private $error;
+    private \Egulias\EmailValidator\Result\Result|\Egulias\EmailValidator\Result\InvalidEmail|null $error = null;
 
     public function isValid(string $email, EmailLexer $emailLexer): bool
     {

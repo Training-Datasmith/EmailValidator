@@ -46,12 +46,12 @@ class DomainLiteral extends PartParser
 
             $this->addObsoleteWarnings();
 
-            if ($this->lexer->isNextTokenAny(array(EmailLexer::S_OPENBRACKET, EmailLexer::S_OPENBRACKET))) {
+            if ($this->lexer->isNextTokenAny([EmailLexer::S_OPENBRACKET, EmailLexer::S_OPENBRACKET])) {
                 return new InvalidEmail(new ExpectingDTEXT(), $this->lexer->current->value);
             }
 
             if ($this->lexer->isNextTokenAny(
-                array(EmailLexer::S_HTAB, EmailLexer::S_SP, EmailLexer::CRLF)
+                [EmailLexer::S_HTAB, EmailLexer::S_SP, EmailLexer::CRLF]
             )) {
                 $this->warnings[CFWSWithFWS::CODE] = new CFWSWithFWS();
                 $this->parseFWS();
@@ -165,8 +165,6 @@ class DomainLiteral extends PartParser
 
     /**
      * @param string $addressLiteral
-     *
-     * @return bool
      */
     protected function checkIPV4Tag($addressLiteral): bool
     {

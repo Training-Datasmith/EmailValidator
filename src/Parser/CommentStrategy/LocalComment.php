@@ -15,7 +15,7 @@ class LocalComment implements CommentStrategy
     /**
      * @var array<int, Warning>
      */
-    private $warnings = [];
+    private array $warnings = [];
 
     public function exitCondition(EmailLexer $lexer, int $openedParenthesis): bool
     {

@@ -13,20 +13,11 @@ use Egulias\EmailValidator\Warning\Comment as WarningComment;
 
 class Comment extends PartParser
 {
-    /**
-     * @var int
-     */
-    private $openedParenthesis = 0;
+    private int $openedParenthesis = 0;
 
-    /**
-     * @var CommentStrategy
-     */
-    private $commentStrategy;
-
-    public function __construct(EmailLexer $lexer, CommentStrategy $commentStrategy)
+    public function __construct(EmailLexer $lexer, private readonly CommentStrategy $commentStrategy)
     {
         $this->lexer = $lexer;
-        $this->commentStrategy = $commentStrategy;
     }
 
     public function parse(): Result
@@ -72,9 +63,6 @@ class Comment extends PartParser
     }
 
 
-    /**
-     * @return void
-     */
     private function warnEscaping(): void
     {
         //Backslash found
@@ -82,7 +70,7 @@ class Comment extends PartParser
             return;
         }
 
-        if (!$this->lexer->isNextTokenAny(array(EmailLexer::S_SP, EmailLexer::S_HTAB, EmailLexer::C_DEL))) {
+        if (!$this->lexer->isNextTokenAny([EmailLexer::S_SP, EmailLexer::S_HTAB, EmailLexer::C_DEL])) {
             return;
         }
 
@@ -95,7 +83,7 @@ class Comment extends PartParser
         try {
             $this->lexer->find(EmailLexer::S_CLOSEPARENTHESIS);
             return false;
-        } catch (\RuntimeException $e) {
+        } catch (\RuntimeException) {
             return true;
         }
     }

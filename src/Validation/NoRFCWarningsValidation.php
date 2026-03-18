@@ -8,10 +8,7 @@ use Egulias\EmailValidator\Result\Reason\RFCWarnings;
 
 class NoRFCWarningsValidation extends RFCValidation
 {
-    /**
-     * @var InvalidEmail|null
-     */
-    private $error;
+    private ?\Egulias\EmailValidator\Result\InvalidEmail $error = null;
 
     /**
      * {@inheritdoc}

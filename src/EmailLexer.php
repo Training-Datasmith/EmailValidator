@@ -149,11 +149,9 @@ class EmailLexer extends AbstractLexer
      */
     private Token $nullToken;
 
-    /** @var string */
-    private $accumulator = '';
+    private string $accumulator = '';
 
-    /** @var bool */
-    private $hasToRecord = false;
+    private bool $hasToRecord = false;
 
     public function __construct()
     {
@@ -175,7 +173,6 @@ class EmailLexer extends AbstractLexer
     /**
      * @param int $type
      * @throws \UnexpectedValueException
-     * @return boolean
      *
      */
     public function find($type): bool
@@ -191,8 +188,6 @@ class EmailLexer extends AbstractLexer
 
     /**
      * moveNext
-     *
-     * @return boolean
      */
     public function moveNext(): bool
     {
@@ -221,7 +216,6 @@ class EmailLexer extends AbstractLexer
      *
      * @param string $value
      * @throws \InvalidArgumentException
-     * @return integer
      */
     protected function getType(&$value): int
     {

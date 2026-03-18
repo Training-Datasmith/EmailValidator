@@ -4,14 +4,8 @@ namespace Egulias\EmailValidator\Result\Reason;
 
 class UnusualElements implements Reason
 {
-    /**
-     * @var string $element
-     */
-    private $element;
-
-    public function __construct(string $element)
+    public function __construct(private readonly string $element)
     {
-        $this->element = $element;
     }
 
     public function code() : int

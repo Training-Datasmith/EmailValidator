@@ -7,20 +7,14 @@ use Egulias\EmailValidator\Validation\EmailValidation;
 
 class EmailValidator
 {
-    /**
-     * @var EmailLexer
-     */
-    private $lexer;
+    private readonly \Egulias\EmailValidator\EmailLexer $lexer;
 
     /**
      * @var Warning\Warning[]
      */
-    private $warnings = [];
+    private array $warnings = [];
 
-    /**
-     * @var ?InvalidEmail
-     */
-    private $error;
+    private ?\Egulias\EmailValidator\Result\InvalidEmail $error = null;
 
     public function __construct()
     {
@@ -28,8 +22,6 @@ class EmailValidator
     }
 
     /**
-     * @param string          $email
-     * @param EmailValidation $emailValidation
      * @return bool
      */
     public function isValid(string $email, EmailValidation $emailValidation)
@@ -41,10 +33,7 @@ class EmailValidator
         return $isValid;
     }
 
-    /**
-     * @return boolean
-     */
-    public function hasWarnings()
+    public function hasWarnings(): bool
     {
         return !empty($this->warnings);
     }

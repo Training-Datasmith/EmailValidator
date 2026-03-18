@@ -13,7 +13,7 @@ class MultipleErrors extends InvalidEmail
     /**
      * @var Reason[]
      */
-    private $reasons = [];
+    private array $reasons = [];
 
     public function __construct()
     {

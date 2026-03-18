@@ -42,27 +42,18 @@ class DNSCheckValidation implements EmailValidation
     /**
      * @var Warning[]
      */
-    private $warnings = [];
+    private array $warnings = [];
 
-    /**
-     * @var InvalidEmail|null
-     */
-    private $error;
+    private ?\Egulias\EmailValidator\Result\InvalidEmail $error = null;
 
-    /**
-     * @var array
-     */
-    private $mxRecords = [];
+    private array $mxRecords = [];
 
-    /**
-     * @var DNSGetRecordWrapper
-     */
-    private $dnsGetRecord;
+    private readonly ?\Egulias\EmailValidator\Validation\DNSGetRecordWrapper $dnsGetRecord;
 
     public function __construct(?DNSGetRecordWrapper $dnsGetRecord = null)
     {
         if (!function_exists('idn_to_ascii')) {
-            throw new \LogicException(sprintf('The %s class requires the Intl extension.', __CLASS__));
+            throw new \LogicException(sprintf('The %s class requires the Intl extension.', self::class));
         }
 
         if ($dnsGetRecord == null) {
@@ -112,10 +103,8 @@ class DNSCheckValidation implements EmailValidation
 
     /**
      * @param string $host
-     *
-     * @return bool
      */
-    protected function checkDns($host)
+    protected function checkDns($host): bool
     {
         $variant = INTL_IDNA_VARIANT_UTS46;
 
@@ -143,7 +132,7 @@ class DNSCheckValidation implements EmailValidation
      *
      * @return bool True on success.
      */
-    private function validateDnsRecords($host): bool
+    private function validateDnsRecords(string $host): bool
     {
         $dnsRecordsResult = $this->dnsGetRecord->getRecords($host, DNS_A + DNS_MX);
 
@@ -187,7 +176,7 @@ class DNSCheckValidation implements EmailValidation
      *
      * @return bool True if valid.
      */
-    private function validateMxRecord($dnsRecord): bool
+    private function validateMxRecord(array $dnsRecord): bool
     {
         if (!isset($dnsRecord['type'])) {
             $this->error = new InvalidEmail(new ReasonNoDNSRecord(), '');

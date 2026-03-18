@@ -15,11 +15,6 @@ abstract class Parser
     protected $warnings = [];
 
     /**
-     * @var EmailLexer
-     */
-    protected $lexer;
-
-    /**
      * id-left "@" id-right
      */
     abstract protected function parseRightFromAt(): Result;
@@ -27,9 +22,8 @@ abstract class Parser
     abstract protected function preLeftParsing(): Result;
 
 
-    public function __construct(EmailLexer $lexer)
+    public function __construct(protected \Egulias\EmailValidator\EmailLexer $lexer)
     {
-        $this->lexer = $lexer;
     }
 
     public function parse(string $str): Result

@@ -6,20 +6,8 @@ use Egulias\EmailValidator\Result\Reason\Reason;
 
 class InvalidEmail implements Result
 {
-    /**
-     * @var string
-     */
-    private string $token;
-
-    /**
-     * @var Reason
-     */
-    protected Reason $reason;
-
-    public function __construct(Reason $reason, string $token)
+    public function __construct(protected Reason $reason, private readonly string $token)
     {
-        $this->token = $token;
-        $this->reason = $reason;
     }
 
     public function isValid(): bool

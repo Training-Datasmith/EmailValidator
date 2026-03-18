@@ -2,7 +2,7 @@
 
 namespace Egulias\EmailValidator\Warning;
 
-abstract class Warning
+abstract class Warning implements \Stringable
 {
     /**
      * @var int CODE
@@ -43,9 +43,6 @@ abstract class Warning
         return $this->rfcNumber;
     }
 
-    /**
-     * @return string
-     */
     public function __toString(): string
     {
         return $this->message() . " rfc: " .  $this->rfcNumber . "internal code: " . static::CODE;

@@ -26,10 +26,7 @@ class LocalPart extends PartParser
         EmailLexer::INVALID => EmailLexer::INVALID
     ];
 
-    /**
-     * @var string
-     */
-    private $localPart = '';
+    private string $localPart = '';
 
 
     public function parse(): Result

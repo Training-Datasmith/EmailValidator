@@ -64,12 +64,12 @@ class  FoldingWhiteSpace extends PartParser
             return new ValidEmail();
         }
 
-        if (!$this->lexer->isNextTokenAny(array(EmailLexer::S_SP, EmailLexer::S_HTAB))) {
+        if (!$this->lexer->isNextTokenAny([EmailLexer::S_SP, EmailLexer::S_HTAB])) {
             return new InvalidEmail(new CRLFX2(), $this->lexer->current->value);
         }
 
         //this has no coverage. Condition is repeated from above one
-        if (!$this->lexer->isNextTokenAny(array(EmailLexer::S_SP, EmailLexer::S_HTAB))) {
+        if (!$this->lexer->isNextTokenAny([EmailLexer::S_SP, EmailLexer::S_HTAB])) {
             return new InvalidEmail(new CRLFAtTheEnd(), $this->lexer->current->value);
         }
 

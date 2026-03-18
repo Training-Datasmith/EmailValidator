@@ -13,15 +13,11 @@ interface EmailValidation
      *
      * @param string     $email      The email you want to validate.
      * @param EmailLexer $emailLexer The email lexer.
-     *
-     * @return bool
      */
     public function isValid(string $email, EmailLexer $emailLexer) : bool;
 
     /**
      * Returns the validation error.
-     *
-     * @return InvalidEmail|null
      */
     public function getError() : ?InvalidEmail;
 

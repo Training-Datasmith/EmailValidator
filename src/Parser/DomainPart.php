@@ -215,8 +215,6 @@ class DomainPart extends PartParser
 
      /**
      * @param Token<int, string> $token
-     *
-     * @return Result
      */
     private function checkNotAllowedChars(Token $token): Result
     {
@@ -227,14 +225,11 @@ class DomainPart extends PartParser
         return new ValidEmail();
     }
 
-    /**
-     * @return Result
-     */
     protected function parseDomainLiteral(): Result
     {
         try {
             $this->lexer->find(EmailLexer::S_CLOSEBRACKET);
-        } catch (\RuntimeException $e) {
+        } catch (\RuntimeException) {
             return new InvalidEmail(new ExpectingDomainLiteralClose(), $this->lexer->current->value);
         }
 
@@ -246,9 +241,7 @@ class DomainPart extends PartParser
 
     /**
      * @param Token<int, string> $prev
-     * @param bool $hasComments
      *
-     * @return Result
      */
     protected function checkDomainPartExceptions(Token $prev, bool $hasComments): Result
     {
@@ -272,11 +265,11 @@ class DomainPart extends PartParser
 
     protected function validateTokens(bool $hasComments): Result
     {
-        $validDomainTokens = array(
+        $validDomainTokens = [
             EmailLexer::GENERIC => true,
             EmailLexer::S_HYPHEN => true,
             EmailLexer::S_DOT => true,
-        );
+        ];
 
         if ($hasComments) {
             $validDomainTokens[EmailLexer::S_OPENPARENTHESIS] = true;

@@ -81,7 +81,7 @@ class DoubleQuote extends PartParser
 
         try {
             $this->lexer->find(EmailLexer::S_DQUOTE);
-        } catch (\Exception $e) {
+        } catch (\Exception) {
             return new InvalidEmail(new UnclosedQuotedString(), $this->lexer->current->value);
         }
         $this->warnings[QuotedString::CODE] = new QuotedString($previous->value, $this->lexer->current->value);

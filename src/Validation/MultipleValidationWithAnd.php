@@ -25,12 +25,9 @@ class MultipleValidationWithAnd implements EmailValidation
     /**
      * @var Warning[]
      */
-    private $warnings = [];
+    private array $warnings = [];
 
-    /**
-     * @var MultipleErrors|null
-     */
-    private $error;
+    private ?\Egulias\EmailValidator\Result\MultipleErrors $error = null;
 
     /**
      * @param EmailValidation[] $validations The validations.

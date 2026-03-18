@@ -16,14 +16,8 @@ abstract class PartParser
      */
     protected $warnings = [];
 
-    /**
-     * @var EmailLexer
-     */
-    protected $lexer;
-
-    public function __construct(EmailLexer $lexer)
+    public function __construct(protected \Egulias\EmailValidator\EmailLexer $lexer)
     {
-        $this->lexer = $lexer;
     }
 
     abstract public function parse(): Result;
