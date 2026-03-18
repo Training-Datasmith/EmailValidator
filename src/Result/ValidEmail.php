@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Egulias\EmailValidator\Result;
 
 class ValidEmail implements Result
@@ -16,7 +18,7 @@ class ValidEmail implements Result
 
     public function description(): string
     {
-        return "Valid email";
+        return 'Valid email';
     }
 
     public function code(): int

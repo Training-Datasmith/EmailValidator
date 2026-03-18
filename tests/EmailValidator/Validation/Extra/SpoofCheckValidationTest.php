@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Egulias\EmailValidator\Tests\EmailValidator\Validation\Extra;
 
 use Egulias\EmailValidator\EmailLexer;
@@ -22,7 +24,7 @@ class SpoofCheckValidationTest extends TestCase
     {
         $validation = new SpoofCheckValidation();
 
-        $this->assertFalse($validation->isValid("Кириллица"."latin漢字"."ひらがな"."カタカナ", new EmailLexer()));
+        $this->assertFalse($validation->isValid('Кириллица'.'latin漢字'.'ひらがな'.'カタカナ', new EmailLexer()));
     }
 
     public static function validUTF8EmailsProvider()
@@ -31,11 +33,11 @@ class SpoofCheckValidationTest extends TestCase
             // Cyrillic
             ['Кириллица@Кириллица'],
             // Latin + Han + Hiragana + Katakana
-            ["latin漢字"."ひらがな"."カタカナ"."@example.com"],
+            ['latin漢字'.'ひらがな'.'カタカナ'.'@example.com'],
             // Latin + Han + Hangul
-            ["latin"."漢字"."조선말"."@example.com"],
+            ['latin'.'漢字'.'조선말'.'@example.com'],
             // Latin + Han + Bopomofo
-            ["latin"."漢字"."ㄅㄆㄇㄈ"."@example.com"]
+            ['latin'.'漢字'.'ㄅㄆㄇㄈ'.'@example.com'],
         ];
     }
 }

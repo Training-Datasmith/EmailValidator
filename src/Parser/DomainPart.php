@@ -1,27 +1,29 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Egulias\EmailValidator\Parser;
 
 use Doctrine\Common\Lexer\Token;
 use Egulias\EmailValidator\EmailLexer;
-use Egulias\EmailValidator\Warning\TLD;
-use Egulias\EmailValidator\Result\Result;
-use Egulias\EmailValidator\Result\ValidEmail;
+use Egulias\EmailValidator\Parser\CommentStrategy\DomainComment;
+use Egulias\EmailValidator\Parser\DomainLiteral as DomainLiteralParser;
 use Egulias\EmailValidator\Result\InvalidEmail;
+use Egulias\EmailValidator\Result\Reason\CharNotAllowed;
+use Egulias\EmailValidator\Result\Reason\ConsecutiveAt;
+use Egulias\EmailValidator\Result\Reason\CRLFAtTheEnd;
+use Egulias\EmailValidator\Result\Reason\DomainHyphened;
+use Egulias\EmailValidator\Result\Reason\DomainTooLong;
 use Egulias\EmailValidator\Result\Reason\DotAtEnd;
 use Egulias\EmailValidator\Result\Reason\DotAtStart;
-use Egulias\EmailValidator\Warning\DeprecatedComment;
-use Egulias\EmailValidator\Result\Reason\CRLFAtTheEnd;
+use Egulias\EmailValidator\Result\Reason\ExpectingATEXT;
+use Egulias\EmailValidator\Result\Reason\ExpectingDomainLiteralClose;
 use Egulias\EmailValidator\Result\Reason\LabelTooLong;
 use Egulias\EmailValidator\Result\Reason\NoDomainPart;
-use Egulias\EmailValidator\Result\Reason\ConsecutiveAt;
-use Egulias\EmailValidator\Result\Reason\DomainTooLong;
-use Egulias\EmailValidator\Result\Reason\CharNotAllowed;
-use Egulias\EmailValidator\Result\Reason\DomainHyphened;
-use Egulias\EmailValidator\Result\Reason\ExpectingATEXT;
-use Egulias\EmailValidator\Parser\CommentStrategy\DomainComment;
-use Egulias\EmailValidator\Result\Reason\ExpectingDomainLiteralClose;
-use Egulias\EmailValidator\Parser\DomainLiteral as DomainLiteralParser;
+use Egulias\EmailValidator\Result\Result;
+use Egulias\EmailValidator\Result\ValidEmail;
+use Egulias\EmailValidator\Warning\DeprecatedComment;
+use Egulias\EmailValidator\Warning\TLD;
 
 class DomainPart extends PartParser
 {
@@ -213,9 +215,9 @@ class DomainPart extends PartParser
         return new ValidEmail();
     }
 
-     /**
-     * @param Token<int, string> $token
-     */
+    /**
+    * @param Token<int, string> $token
+    */
     private function checkNotAllowedChars(Token $token): Result
     {
         $notAllowed = [EmailLexer::S_BACKSLASH => true, EmailLexer::S_SLASH => true];
@@ -294,7 +296,6 @@ class DomainPart extends PartParser
         $this->label .= $this->lexer->current->value;
         return new ValidEmail();
     }
-
 
     private function isLabelTooLong(string $label): bool
     {

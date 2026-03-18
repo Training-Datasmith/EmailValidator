@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Egulias\EmailValidator\Result;
 
 use Egulias\EmailValidator\Result\Reason\Reason;
@@ -22,7 +24,7 @@ class InvalidEmail implements Result
 
     public function description(): string
     {
-        return $this->reason->description() . " in char " . $this->token;
+        return $this->reason->description() . ' in char ' . $this->token;
     }
 
     public function code(): int

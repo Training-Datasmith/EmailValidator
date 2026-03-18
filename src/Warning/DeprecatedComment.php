@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Egulias\EmailValidator\Warning;
 
 class DeprecatedComment extends Warning

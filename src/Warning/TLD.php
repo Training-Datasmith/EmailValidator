@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Egulias\EmailValidator\Warning;
 
 class TLD extends Warning
@@ -8,6 +10,6 @@ class TLD extends Warning
 
     public function __construct()
     {
-        $this->message = "RFC5321, TLD";
+        $this->message = 'RFC5321, TLD';
     }
 }

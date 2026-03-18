@@ -1,15 +1,17 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Egulias\EmailValidator\Parser;
 
 use Egulias\EmailValidator\EmailLexer;
-use Egulias\EmailValidator\Result\Result;
-use Egulias\EmailValidator\Warning\QuotedPart;
-use Egulias\EmailValidator\Result\InvalidEmail;
 use Egulias\EmailValidator\Parser\CommentStrategy\CommentStrategy;
+use Egulias\EmailValidator\Result\InvalidEmail;
 use Egulias\EmailValidator\Result\Reason\UnclosedComment;
 use Egulias\EmailValidator\Result\Reason\UnOpenedComment;
+use Egulias\EmailValidator\Result\Result;
 use Egulias\EmailValidator\Warning\Comment as WarningComment;
+use Egulias\EmailValidator\Warning\QuotedPart;
 
 class Comment extends PartParser
 {
@@ -61,7 +63,6 @@ class Comment extends PartParser
 
         return $finalValidations;
     }
-
 
     private function warnEscaping(): void
     {

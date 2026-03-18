@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Egulias\EmailValidator\Parser\CommentStrategy;
 
 use Egulias\EmailValidator\EmailLexer;

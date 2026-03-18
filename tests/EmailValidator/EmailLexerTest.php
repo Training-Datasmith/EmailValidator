@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Egulias\EmailValidator\Tests\EmailValidator;
 
 use Egulias\EmailValidator\EmailLexer;
@@ -7,7 +9,6 @@ use PHPUnit\Framework\TestCase;
 
 class EmailLexerTest extends TestCase
 {
-
     public function testLexerExtendsLib()
     {
         $lexer = new EmailLexer();
@@ -53,11 +54,11 @@ class EmailLexerTest extends TestCase
 
     public static function invalidUTF8CharsProvider()
     {
-        $chars = array();
+        $chars = [];
         for ($i = 0; $i < 0x100; ++$i) {
             $c = self::utf8Chr($i);
             if (preg_match('/(?=\p{Cc})(?=[^\t\n\n\r])/u', $c) && !preg_match('/\x{0000}/u', $c)) {
-                $chars[] = array($c);
+                $chars[] = [$c];
             }
         }
 
@@ -107,7 +108,7 @@ class EmailLexerTest extends TestCase
     public function testLexerForUTF8()
     {
         $lexer = new EmailLexer();
-        $lexer->setInput("áÇ@bar.com");
+        $lexer->setInput('áÇ@bar.com');
         $lexer->moveNext();
         $lexer->moveNext();
         $this->assertEquals(EmailLexer::GENERIC, $lexer->current->type);
@@ -125,50 +126,50 @@ class EmailLexerTest extends TestCase
 
     public static function getTokens()
     {
-        return array(
-            array("foo", EmailLexer::GENERIC),
-            array("\r", EmailLexer::S_CR),
-            array("\t", EmailLexer::S_HTAB),
-            array("\r\n", EmailLexer::CRLF),
-            array("\n", EmailLexer::S_LF),
-            array(" ", EmailLexer::S_SP),
-            array("@", EmailLexer::S_AT),
-            array("IPv6", EmailLexer::S_IPV6TAG),
-            array("::", EmailLexer::S_DOUBLECOLON),
-            array(":", EmailLexer::S_COLON),
-            array(".", EmailLexer::S_DOT),
-            array("\"", EmailLexer::S_DQUOTE),
-            array("`", EmailLexer::S_BACKTICK),
-            array("'", EmailLexer::S_SQUOTE),
-            array("-", EmailLexer::S_HYPHEN),
-            array("\\", EmailLexer::S_BACKSLASH),
-            array("/", EmailLexer::S_SLASH),
-            array("(", EmailLexer::S_OPENPARENTHESIS),
-            array(")", EmailLexer::S_CLOSEPARENTHESIS),
-            array('<', EmailLexer::S_LOWERTHAN),
-            array('>', EmailLexer::S_GREATERTHAN),
-            array('[', EmailLexer::S_OPENBRACKET),
-            array(']', EmailLexer::S_CLOSEBRACKET),
-            array(';', EmailLexer::S_SEMICOLON),
-            array(',', EmailLexer::S_COMMA),
-            array('<', EmailLexer::S_LOWERTHAN),
-            array('>', EmailLexer::S_GREATERTHAN),
-            array('{', EmailLexer::S_OPENCURLYBRACES),
-            array('}', EmailLexer::S_CLOSECURLYBRACES),
-            array('|', EmailLexer::S_PIPE),
-            array('~', EmailLexer::S_TILDE),
-            array('=', EmailLexer::S_EQUAL),
-            array('+', EmailLexer::S_PLUS),
-            array('¿', EmailLexer::INVERT_QUESTIONMARK),
-            array('?', EmailLexer::QUESTIONMARK),
-            array('#', EmailLexer::NUMBER_SIGN),
-            array('¡', EmailLexer::INVERT_EXCLAMATION),
-            array('_', EmailLexer::S_UNDERSCORE),
-            array('',  EmailLexer::S_EMPTY),
-            array(chr(31),  EmailLexer::INVALID),
-            array(chr(226),  EmailLexer::GENERIC),
-            array(chr(0),  EmailLexer::C_NUL)
-        );
+        return [
+            ['foo', EmailLexer::GENERIC],
+            ["\r", EmailLexer::S_CR],
+            ["\t", EmailLexer::S_HTAB],
+            ["\r\n", EmailLexer::CRLF],
+            ["\n", EmailLexer::S_LF],
+            [' ', EmailLexer::S_SP],
+            ['@', EmailLexer::S_AT],
+            ['IPv6', EmailLexer::S_IPV6TAG],
+            ['::', EmailLexer::S_DOUBLECOLON],
+            [':', EmailLexer::S_COLON],
+            ['.', EmailLexer::S_DOT],
+            ['"', EmailLexer::S_DQUOTE],
+            ['`', EmailLexer::S_BACKTICK],
+            ["'", EmailLexer::S_SQUOTE],
+            ['-', EmailLexer::S_HYPHEN],
+            ['\\', EmailLexer::S_BACKSLASH],
+            ['/', EmailLexer::S_SLASH],
+            ['(', EmailLexer::S_OPENPARENTHESIS],
+            [')', EmailLexer::S_CLOSEPARENTHESIS],
+            ['<', EmailLexer::S_LOWERTHAN],
+            ['>', EmailLexer::S_GREATERTHAN],
+            ['[', EmailLexer::S_OPENBRACKET],
+            [']', EmailLexer::S_CLOSEBRACKET],
+            [';', EmailLexer::S_SEMICOLON],
+            [',', EmailLexer::S_COMMA],
+            ['<', EmailLexer::S_LOWERTHAN],
+            ['>', EmailLexer::S_GREATERTHAN],
+            ['{', EmailLexer::S_OPENCURLYBRACES],
+            ['}', EmailLexer::S_CLOSECURLYBRACES],
+            ['|', EmailLexer::S_PIPE],
+            ['~', EmailLexer::S_TILDE],
+            ['=', EmailLexer::S_EQUAL],
+            ['+', EmailLexer::S_PLUS],
+            ['¿', EmailLexer::INVERT_QUESTIONMARK],
+            ['?', EmailLexer::QUESTIONMARK],
+            ['#', EmailLexer::NUMBER_SIGN],
+            ['¡', EmailLexer::INVERT_EXCLAMATION],
+            ['_', EmailLexer::S_UNDERSCORE],
+            ['',  EmailLexer::S_EMPTY],
+            [chr(31),  EmailLexer::INVALID],
+            [chr(226),  EmailLexer::GENERIC],
+            [chr(0),  EmailLexer::C_NUL],
+        ];
     }
 
     public function testRecordIsOffAtStart()

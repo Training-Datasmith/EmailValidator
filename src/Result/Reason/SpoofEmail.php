@@ -1,17 +1,19 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Egulias\EmailValidator\Result\Reason;
 
 class SpoofEmail implements Reason
 {
-    public function code() : int
+    public function code(): int
     {
         return 298;
     }
 
-    public function description() : string
+    public function description(): string
     {
-        return 'The email contains mixed UTF8 chars that makes it suspicious'; 
+        return 'The email contains mixed UTF8 chars that makes it suspicious';
     }
 
 }

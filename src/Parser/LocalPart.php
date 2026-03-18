@@ -1,17 +1,19 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Egulias\EmailValidator\Parser;
 
 use Egulias\EmailValidator\EmailLexer;
-use Egulias\EmailValidator\Result\Result;
-use Egulias\EmailValidator\Result\ValidEmail;
+use Egulias\EmailValidator\Parser\CommentStrategy\LocalComment;
 use Egulias\EmailValidator\Result\InvalidEmail;
-use Egulias\EmailValidator\Warning\LocalTooLong;
+use Egulias\EmailValidator\Result\Reason\ConsecutiveDot;
 use Egulias\EmailValidator\Result\Reason\DotAtEnd;
 use Egulias\EmailValidator\Result\Reason\DotAtStart;
-use Egulias\EmailValidator\Result\Reason\ConsecutiveDot;
 use Egulias\EmailValidator\Result\Reason\ExpectingATEXT;
-use Egulias\EmailValidator\Parser\CommentStrategy\LocalComment;
+use Egulias\EmailValidator\Result\Result;
+use Egulias\EmailValidator\Result\ValidEmail;
+use Egulias\EmailValidator\Warning\LocalTooLong;
 
 class LocalPart extends PartParser
 {
@@ -23,11 +25,10 @@ class LocalPart extends PartParser
         EmailLexer::S_LOWERTHAN => EmailLexer::S_LOWERTHAN,
         EmailLexer::S_COLON => EmailLexer::S_COLON,
         EmailLexer::S_SEMICOLON => EmailLexer::S_SEMICOLON,
-        EmailLexer::INVALID => EmailLexer::INVALID
+        EmailLexer::INVALID => EmailLexer::INVALID,
     ];
 
     private string $localPart = '';
-
 
     public function parse(): Result
     {

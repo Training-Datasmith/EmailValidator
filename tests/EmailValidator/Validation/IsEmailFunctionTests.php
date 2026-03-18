@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Egulias\EmailValidator\Tests\EmailValidator\Validation;
 
 use Egulias\EmailValidator\EmailValidator;
@@ -18,10 +20,10 @@ class IsEmailFunctionTests extends TestCase
         $validator = new EmailValidator();
         $validations = new MultipleValidationWithAnd([
             new NoRFCWarningsValidation(),
-            new DNSCheckValidation()
+            new DNSCheckValidation(),
         ]);
 
-        $this->assertFalse($validator->isValid($email, $validations), "Tested email " . $email);
+        $this->assertFalse($validator->isValid($email, $validations), 'Tested email ' . $email);
 
     }
 
@@ -33,7 +35,7 @@ class IsEmailFunctionTests extends TestCase
         $elements = $document->getElementsByTagName('test');
         $tests = [];
 
-        foreach($elements as $testElement) {
+        foreach ($elements as $testElement) {
             $childNode = $testElement->childNodes;
             $tests[][] = ($childNode->item(1)->getAttribute('value'));
         }

@@ -1,18 +1,19 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Egulias\EmailValidator;
 
-use Egulias\EmailValidator\Result\Result;
 use Egulias\EmailValidator\Parser\IDLeftPart;
 use Egulias\EmailValidator\Parser\IDRightPart;
-use Egulias\EmailValidator\Result\ValidEmail;
 use Egulias\EmailValidator\Result\InvalidEmail;
-use Egulias\EmailValidator\Warning\EmailTooLong;
 use Egulias\EmailValidator\Result\Reason\NoLocalPart;
+use Egulias\EmailValidator\Result\Result;
+use Egulias\EmailValidator\Result\ValidEmail;
+use Egulias\EmailValidator\Warning\EmailTooLong;
 
 class MessageIDParser extends Parser
 {
-
     public const EMAILID_MAX_LENGTH = 254;
 
     /**

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Egulias\EmailValidator\Warning;
 
 class Comment extends Warning
@@ -8,6 +10,6 @@ class Comment extends Warning
 
     public function __construct()
     {
-        $this->message = "Comments found in this email";
+        $this->message = 'Comments found in this email';
     }
 }

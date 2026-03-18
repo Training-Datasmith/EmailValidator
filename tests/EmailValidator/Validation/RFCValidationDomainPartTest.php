@@ -1,35 +1,36 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Egulias\EmailValidator\Tests\EmailValidator\Validation;
 
-use PHPUnit\Framework\TestCase;
 use Egulias\EmailValidator\EmailLexer;
-use Egulias\EmailValidator\Warning\TLD;
-use Egulias\EmailValidator\Warning\Comment;
 use Egulias\EmailValidator\Result\InvalidEmail;
-use Egulias\EmailValidator\Warning\IPV6BadChar;
-use Egulias\EmailValidator\Result\Reason\CRNoLF;
-use Egulias\EmailValidator\Warning\IPV6ColonEnd;
-use Egulias\EmailValidator\Warning\DomainLiteral;
-use Egulias\EmailValidator\Warning\IPV6MaxGroups;
-use Egulias\EmailValidator\Warning\ObsoleteDTEXT;
-use Egulias\EmailValidator\Result\Reason\DotAtEnd;
-use Egulias\EmailValidator\Warning\AddressLiteral;
-use Egulias\EmailValidator\Warning\IPV6ColonStart;
-use Egulias\EmailValidator\Warning\IPV6Deprecated;
-use Egulias\EmailValidator\Warning\IPV6GroupCount;
-use Egulias\EmailValidator\Warning\IPV6DoubleColon;
-use Egulias\EmailValidator\Result\Reason\DotAtStart;
-use Egulias\EmailValidator\Validation\RFCValidation;
-use Egulias\EmailValidator\Result\Reason\LabelTooLong;
-use Egulias\EmailValidator\Result\Reason\NoDomainPart;
 use Egulias\EmailValidator\Result\Reason\ConsecutiveAt;
 use Egulias\EmailValidator\Result\Reason\ConsecutiveDot;
+use Egulias\EmailValidator\Result\Reason\CRNoLF;
 use Egulias\EmailValidator\Result\Reason\DomainHyphened;
+use Egulias\EmailValidator\Result\Reason\DotAtEnd;
+use Egulias\EmailValidator\Result\Reason\DotAtStart;
 use Egulias\EmailValidator\Result\Reason\ExpectingATEXT;
 use Egulias\EmailValidator\Result\Reason\ExpectingDTEXT;
+use Egulias\EmailValidator\Result\Reason\LabelTooLong;
+use Egulias\EmailValidator\Result\Reason\NoDomainPart;
 use Egulias\EmailValidator\Result\Reason\UnOpenedComment;
-
+use Egulias\EmailValidator\Validation\RFCValidation;
+use Egulias\EmailValidator\Warning\AddressLiteral;
+use Egulias\EmailValidator\Warning\Comment;
+use Egulias\EmailValidator\Warning\DomainLiteral;
+use Egulias\EmailValidator\Warning\IPV6BadChar;
+use Egulias\EmailValidator\Warning\IPV6ColonEnd;
+use Egulias\EmailValidator\Warning\IPV6ColonStart;
+use Egulias\EmailValidator\Warning\IPV6Deprecated;
+use Egulias\EmailValidator\Warning\IPV6DoubleColon;
+use Egulias\EmailValidator\Warning\IPV6GroupCount;
+use Egulias\EmailValidator\Warning\IPV6MaxGroups;
+use Egulias\EmailValidator\Warning\ObsoleteDTEXT;
+use Egulias\EmailValidator\Warning\TLD;
+use PHPUnit\Framework\TestCase;
 
 class RFCValidationDomainPartTest extends TestCase
 {
@@ -43,13 +44,13 @@ class RFCValidationDomainPartTest extends TestCase
      */
     protected $lexer;
 
-    protected function setUp() : void
+    protected function setUp(): void
     {
         $this->validator = new RFCValidation();
         $this->lexer = new EmailLexer();
     }
 
-    protected function tearDown() : void
+    protected function tearDown(): void
     {
         $this->validator = null;
     }
@@ -64,20 +65,20 @@ class RFCValidationDomainPartTest extends TestCase
 
     public static function getValidEmails()
     {
-        return array(
+        return [
             ['fabien@symfony.com'],
             ['example@example.co.uk'],
             ['example@localhost'],
             ['example@faked(fake).co.uk'],
             ['инфо@письмо.рф'],
             ['müller@möller.de'],
-            ["1500111@профи-инвест.рф"],
+            ['1500111@профи-инвест.рф'],
             ['validipv6@[IPv6:2001:db8:1ff::a0b:dbd0]'],
             ['validipv4@[127.0.0.0]'],
             ['validipv4@127.0.0.0'],
             ['withhyphen@domain-exam.com'],
-            ['valid_long_domain@71846jnrsoj91yfhc18rkbrf90ue3onl8y46js38kae8inz0t1.5a-xdycuau.na49.le.example.com']
-        );
+            ['valid_long_domain@71846jnrsoj91yfhc18rkbrf90ue3onl8y46js38kae8inz0t1.5a-xdycuau.na49.le.example.com'],
+        ];
     }
 
     /**
@@ -175,14 +176,14 @@ class RFCValidationDomainPartTest extends TestCase
             [new InvalidEmail(new UnOpenedComment(), ')'), 'example@comment)localhost'],
             [new InvalidEmail(new UnOpenedComment(), ')'), 'example@localhost(comment))'],
             [new InvalidEmail(new UnOpenedComment(), 'com'), 'example@(comment))example.com'],
-            [new InvalidEmail(new ExpectingDTEXT(), '['), "example@[[]"],
+            [new InvalidEmail(new ExpectingDTEXT(), '['), 'example@[[]'],
             [new InvalidEmail(new CRNoLF(), "\r"), "example@exa\rmple.co.uk"],
-            [new InvalidEmail(new CRNoLF(), "["), "example@[\r]"],
+            [new InvalidEmail(new CRNoLF(), '['), "example@[\r]"],
             [new InvalidEmail(new ExpectingATEXT('Invalid token in domain: ,'), ','), 'example@exam,ple.com'],
             [new InvalidEmail(new ExpectingATEXT("Invalid token in domain: '"), "'"), "test@example.com'"],
-            [new InvalidEmail(new LabelTooLong(), "."), sprintf('example@%s.com', str_repeat('ъ', 64))],
-            [new InvalidEmail(new LabelTooLong(), "."), sprintf('example@%s.com', str_repeat('a4t', 22))],
-            [new InvalidEmail(new LabelTooLong(), ""), sprintf('example@%s', str_repeat('a4t', 22))],
+            [new InvalidEmail(new LabelTooLong(), '.'), sprintf('example@%s.com', str_repeat('ъ', 64))],
+            [new InvalidEmail(new LabelTooLong(), '.'), sprintf('example@%s.com', str_repeat('a4t', 22))],
+            [new InvalidEmail(new LabelTooLong(), ''), sprintf('example@%s', str_repeat('a4t', 22))],
         ];
     }
 
@@ -194,8 +195,9 @@ class RFCValidationDomainPartTest extends TestCase
         $this->assertTrue($this->validator->isValid($email, $this->lexer));
         $warnings = $this->validator->getWarnings();
         $this->assertCount(
-            count($expectedWarnings), $warnings,
-            "Expected: " . implode(",", $expectedWarnings) . " and got: " . PHP_EOL . implode(PHP_EOL, $warnings)
+            count($expectedWarnings),
+            $warnings,
+            'Expected: ' . implode(',', $expectedWarnings) . ' and got: ' . PHP_EOL . implode(PHP_EOL, $warnings)
         );
 
         foreach ($warnings as $warning) {
@@ -219,15 +221,15 @@ class RFCValidationDomainPartTest extends TestCase
             [[DomainLiteral::CODE, TLD::CODE], 'example@[::123.45.67.178]'],
             [
                 [IPV6ColonStart::CODE, AddressLiteral::CODE, IPV6GroupCount::CODE, TLD::CODE],
-                'example@[IPv6::2001:0db8:85a3:0000:0000:8a2e:0370:7334]'
+                'example@[IPv6::2001:0db8:85a3:0000:0000:8a2e:0370:7334]',
             ],
             [
                 [AddressLiteral::CODE, IPV6BadChar::CODE, TLD::CODE],
-                'example@[IPv6:z001:0db8:85a3:0000:0000:8a2e:0370:7334]'
+                'example@[IPv6:z001:0db8:85a3:0000:0000:8a2e:0370:7334]',
             ],
             [
                 [AddressLiteral::CODE, IPV6ColonEnd::CODE, TLD::CODE],
-                'example@[IPv6:2001:0db8:85a3:0000:0000:8a2e:0370:]'
+                'example@[IPv6:2001:0db8:85a3:0000:0000:8a2e:0370:]',
             ],
         ];
     }
@@ -238,7 +240,7 @@ class RFCValidationDomainPartTest extends TestCase
             ['example@symƒony.com'],
         ];
     }
-    
+
     /**
      * @dataProvider invalidUTF16Chars
      */

@@ -1,15 +1,17 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Egulias\EmailValidator\Parser;
 
 use Egulias\EmailValidator\EmailLexer;
-use Egulias\EmailValidator\Result\ValidEmail;
 use Egulias\EmailValidator\Result\InvalidEmail;
-use Egulias\EmailValidator\Warning\CFWSWithFWS;
-use Egulias\EmailValidator\Warning\QuotedString;
 use Egulias\EmailValidator\Result\Reason\ExpectingATEXT;
 use Egulias\EmailValidator\Result\Reason\UnclosedQuotedString;
 use Egulias\EmailValidator\Result\Result;
+use Egulias\EmailValidator\Result\ValidEmail;
+use Egulias\EmailValidator\Warning\CFWSWithFWS;
+use Egulias\EmailValidator\Warning\QuotedString;
 
 class DoubleQuote extends PartParser
 {
@@ -24,14 +26,14 @@ class DoubleQuote extends PartParser
         $special = [
             EmailLexer::S_CR => true,
             EmailLexer::S_HTAB => true,
-            EmailLexer::S_LF => true
+            EmailLexer::S_LF => true,
         ];
 
         $invalid = [
             EmailLexer::C_NUL => true,
             EmailLexer::S_HTAB => true,
             EmailLexer::S_CR => true,
-            EmailLexer::S_LF => true
+            EmailLexer::S_LF => true,
         ];
 
         $setSpecialsWarning = true;
@@ -50,7 +52,7 @@ class DoubleQuote extends PartParser
             $this->lexer->moveNext();
 
             if (!$this->escaped() && isset($invalid[$this->lexer->current->type])) {
-                return new InvalidEmail(new ExpectingATEXT("Expecting ATEXT between DQUOTE"), $this->lexer->current->value);
+                return new InvalidEmail(new ExpectingATEXT('Expecting ATEXT between DQUOTE'), $this->lexer->current->value);
             }
         }
 
@@ -64,7 +66,7 @@ class DoubleQuote extends PartParser
         }
 
         if (!$this->lexer->isNextToken(EmailLexer::S_AT) && !$prev->isA(EmailLexer::S_BACKSLASH)) {
-            return new InvalidEmail(new ExpectingATEXT("Expecting ATEXT between DQUOTE"), $this->lexer->current->value);
+            return new InvalidEmail(new ExpectingATEXT('Expecting ATEXT between DQUOTE'), $this->lexer->current->value);
         }
 
         return new ValidEmail();

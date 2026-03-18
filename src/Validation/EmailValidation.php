@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Egulias\EmailValidator\Validation;
 
 use Egulias\EmailValidator\EmailLexer;
@@ -14,17 +16,17 @@ interface EmailValidation
      * @param string     $email      The email you want to validate.
      * @param EmailLexer $emailLexer The email lexer.
      */
-    public function isValid(string $email, EmailLexer $emailLexer) : bool;
+    public function isValid(string $email, EmailLexer $emailLexer): bool;
 
     /**
      * Returns the validation error.
      */
-    public function getError() : ?InvalidEmail;
+    public function getError(): ?InvalidEmail;
 
     /**
      * Returns the validation warnings.
      *
      * @return Warning[]
      */
-    public function getWarnings() : array;
+    public function getWarnings(): array;
 }

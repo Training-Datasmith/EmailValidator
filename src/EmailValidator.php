@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Egulias\EmailValidator;
 
 use Egulias\EmailValidator\Result\InvalidEmail;

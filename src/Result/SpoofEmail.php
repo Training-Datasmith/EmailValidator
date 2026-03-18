@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Egulias\EmailValidator\Result;
 
 use Egulias\EmailValidator\Result\Reason\SpoofEmail as ReasonSpoofEmail;

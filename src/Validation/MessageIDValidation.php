@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Egulias\EmailValidator\Validation;
 
 use Egulias\EmailValidator\EmailLexer;
@@ -10,7 +12,6 @@ use Egulias\EmailValidator\Warning\Warning;
 
 class MessageIDValidation implements EmailValidation
 {
-
     /**
      * @var Warning[]
      */

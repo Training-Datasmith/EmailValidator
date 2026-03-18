@@ -1,10 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Egulias\EmailValidator\Parser;
 
-use Egulias\EmailValidator\Result\Result;
 use Egulias\EmailValidator\Result\InvalidEmail;
 use Egulias\EmailValidator\Result\Reason\CommentsInIDRight;
+use Egulias\EmailValidator\Result\Result;
 
 class IDLeftPart extends LocalPart
 {

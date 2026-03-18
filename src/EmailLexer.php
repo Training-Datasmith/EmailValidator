@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Egulias\EmailValidator;
 
 use Doctrine\Common\Lexer\AbstractLexer;
@@ -80,7 +82,7 @@ class EmailLexer extends AbstractLexer
         ','    => self::S_COMMA,
         '.'    => self::S_DOT,
         "'"    => self::S_SQUOTE,
-        "`"    => self::S_BACKTICK,
+        '`'    => self::S_BACKTICK,
         '"'    => self::S_DQUOTE,
         '-'    => self::S_HYPHEN,
         '::'   => self::S_DOUBLECOLON,

@@ -1,11 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Egulias\EmailValidator\Tests\EmailValidator\Result;
 
-use PHPUnit\Framework\TestCase;
-use Egulias\EmailValidator\Result\ValidEmail;
 use Egulias\EmailValidator\Result\InvalidEmail;
 use Egulias\EmailValidator\Result\Reason\CharNotAllowed;
+use Egulias\EmailValidator\Result\ValidEmail;
+use PHPUnit\Framework\TestCase;
 
 class ResultTest extends TestCase
 {
@@ -13,7 +15,7 @@ class ResultTest extends TestCase
     {
         $result = new ValidEmail();
         $expectedCode = 0;
-        $expectedDescription = "Valid email";
+        $expectedDescription = 'Valid email';
 
         $this->assertTrue($result->isValid());
         $this->assertEquals($expectedCode, $result->code());
@@ -23,10 +25,10 @@ class ResultTest extends TestCase
     public function testResultIsInvalidEmail()
     {
         $reason = new CharNotAllowed();
-        $token = "T";
+        $token = 'T';
         $result = new InvalidEmail($reason, $token);
         $expectedCode = $reason->code();
-        $expectedDescription = $reason->description() . " in char " . $token;
+        $expectedDescription = $reason->description() . ' in char ' . $token;
 
         $this->assertFalse($result->isValid());
         $this->assertEquals($expectedCode, $result->code());

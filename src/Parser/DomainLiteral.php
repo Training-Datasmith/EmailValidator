@@ -1,25 +1,27 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Egulias\EmailValidator\Parser;
 
 use Egulias\EmailValidator\EmailLexer;
-use Egulias\EmailValidator\Result\Result;
-use Egulias\EmailValidator\Result\ValidEmail;
 use Egulias\EmailValidator\Result\InvalidEmail;
-use Egulias\EmailValidator\Warning\CFWSWithFWS;
-use Egulias\EmailValidator\Warning\IPV6BadChar;
 use Egulias\EmailValidator\Result\Reason\CRNoLF;
-use Egulias\EmailValidator\Warning\IPV6ColonEnd;
-use Egulias\EmailValidator\Warning\IPV6MaxGroups;
-use Egulias\EmailValidator\Warning\ObsoleteDTEXT;
-use Egulias\EmailValidator\Warning\AddressLiteral;
-use Egulias\EmailValidator\Warning\IPV6ColonStart;
-use Egulias\EmailValidator\Warning\IPV6Deprecated;
-use Egulias\EmailValidator\Warning\IPV6GroupCount;
-use Egulias\EmailValidator\Warning\IPV6DoubleColon;
 use Egulias\EmailValidator\Result\Reason\ExpectingDTEXT;
 use Egulias\EmailValidator\Result\Reason\UnusualElements;
+use Egulias\EmailValidator\Result\Result;
+use Egulias\EmailValidator\Result\ValidEmail;
+use Egulias\EmailValidator\Warning\AddressLiteral;
+use Egulias\EmailValidator\Warning\CFWSWithFWS;
 use Egulias\EmailValidator\Warning\DomainLiteral as WarningDomainLiteral;
+use Egulias\EmailValidator\Warning\IPV6BadChar;
+use Egulias\EmailValidator\Warning\IPV6ColonEnd;
+use Egulias\EmailValidator\Warning\IPV6ColonStart;
+use Egulias\EmailValidator\Warning\IPV6Deprecated;
+use Egulias\EmailValidator\Warning\IPV6DoubleColon;
+use Egulias\EmailValidator\Warning\IPV6GroupCount;
+use Egulias\EmailValidator\Warning\IPV6MaxGroups;
+use Egulias\EmailValidator\Warning\ObsoleteDTEXT;
 
 class DomainLiteral extends PartParser
 {
@@ -29,7 +31,7 @@ class DomainLiteral extends PartParser
         EmailLexer::INVALID,
         EmailLexer::C_DEL,
         EmailLexer::S_LF,
-        EmailLexer::S_BACKSLASH
+        EmailLexer::S_BACKSLASH,
     ];
 
     public function parse(): Result
@@ -74,7 +76,6 @@ class DomainLiteral extends PartParser
 
             $addressLiteral .= $this->lexer->current->value;
         } while ($this->lexer->moveNext());
-
 
         //Encapsulate
         $addressLiteral = str_replace('[', '', $addressLiteral);

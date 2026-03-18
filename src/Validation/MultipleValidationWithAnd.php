@@ -1,11 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Egulias\EmailValidator\Validation;
 
 use Egulias\EmailValidator\EmailLexer;
 use Egulias\EmailValidator\Result\InvalidEmail;
-use Egulias\EmailValidator\Validation\Exception\EmptyValidationList;
 use Egulias\EmailValidator\Result\MultipleErrors;
+use Egulias\EmailValidator\Validation\Exception\EmptyValidationList;
 use Egulias\EmailValidator\Warning\Warning;
 
 class MultipleValidationWithAnd implements EmailValidation

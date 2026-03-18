@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Egulias\EmailValidator\Tests\EmailValidator;
 
 use Egulias\EmailValidator\EmailLexer;
@@ -14,7 +16,7 @@ class EmailParserTest extends TestCase
             ['test@foo.com', 'test', 'foo.com'],
             ['"user@name"@example.com', '"user@name"', 'example.com'],
             ['validipv6@[IPv6:2001:db8:1ff::a0b:dbd0]', 'validipv6', '[IPv6:2001:db8:1ff::a0b:dbd0]'],
-            ['validipv4@[127.0.0.0]', 'validipv4', '[127.0.0.0]']
+            ['validipv4@[127.0.0.0]', 'validipv4', '[127.0.0.0]'],
         ];
     }
     /**

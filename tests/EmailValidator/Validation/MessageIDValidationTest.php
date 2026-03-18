@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Egulias\EmailValidator\Tests\EmailValidator\Validation;
 
 use Egulias\EmailValidator\EmailLexer;
@@ -8,7 +10,6 @@ use PHPUnit\Framework\TestCase;
 
 class MessageIDValidationTest extends TestCase
 {
-
     /**
      * @dataProvider validMessageIDs
      */
@@ -19,7 +20,7 @@ class MessageIDValidationTest extends TestCase
         $this->assertTrue($validator->isValid($messageID, new EmailLexer()));
     }
 
-    public static function validMessageIDs() : array
+    public static function validMessageIDs(): array
     {
         return [
             ['a@b.c+&%$.d'],
@@ -38,7 +39,7 @@ class MessageIDValidationTest extends TestCase
         $this->assertFalse($validator->isValid($messageID, new EmailLexer()));
     }
 
-    public static function invalidMessageIDs() : array
+    public static function invalidMessageIDs(): array
     {
         return [
             ['example'],
@@ -58,13 +59,13 @@ class MessageIDValidationTest extends TestCase
              * side.
              */
             ['example(comment)@example.com'],
-            ["\r\nFWS@example.com"]
+            ["\r\nFWS@example.com"],
         ];
     }
 
     public function testInvalidMessageIDsWithError()
     {
-        $this->markTestIncomplete("missing error check");
+        $this->markTestIncomplete('missing error check');
 
     }
 }

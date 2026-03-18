@@ -1,27 +1,29 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Egulias\EmailValidator\Tests\EmailValidator\Validation;
 
-use PHPUnit\Framework\TestCase;
 use Egulias\EmailValidator\EmailLexer;
-use Egulias\EmailValidator\Warning\Comment;
-use Egulias\EmailValidator\Warning\CFWSNearAt;
 use Egulias\EmailValidator\Result\InvalidEmail;
-use Egulias\EmailValidator\Warning\CFWSWithFWS;
-use Egulias\EmailValidator\Warning\LocalTooLong;
-use Egulias\EmailValidator\Warning\QuotedString;
-use Egulias\EmailValidator\Validation\RFCValidation;
-use Egulias\EmailValidator\Result\Reason\NoLocalPart;
 use Egulias\EmailValidator\Result\Reason\AtextAfterCFWS;
-use Egulias\EmailValidator\Result\Reason\UnOpenedComment;
-use Egulias\EmailValidator\Result\Reason\UnclosedQuotedString;
+use Egulias\EmailValidator\Result\Reason\ConsecutiveDot;
 use Egulias\EmailValidator\Result\Reason\CRNoLF;
 use Egulias\EmailValidator\Result\Reason\DotAtEnd;
 use Egulias\EmailValidator\Result\Reason\DotAtStart;
-use Egulias\EmailValidator\Result\Reason\ConsecutiveDot;
 use Egulias\EmailValidator\Result\Reason\ExpectingATEXT;
+use Egulias\EmailValidator\Result\Reason\NoLocalPart;
 use Egulias\EmailValidator\Result\Reason\UnclosedComment;
+use Egulias\EmailValidator\Result\Reason\UnclosedQuotedString;
+use Egulias\EmailValidator\Result\Reason\UnOpenedComment;
+use Egulias\EmailValidator\Validation\RFCValidation;
+use Egulias\EmailValidator\Warning\CFWSNearAt;
+use Egulias\EmailValidator\Warning\CFWSWithFWS;
+use Egulias\EmailValidator\Warning\Comment;
+use Egulias\EmailValidator\Warning\LocalTooLong;
+use Egulias\EmailValidator\Warning\QuotedString;
 use Egulias\EmailValidator\Warning\TLD;
+use PHPUnit\Framework\TestCase;
 
 class RFCValidationTest extends TestCase
 {
@@ -35,13 +37,13 @@ class RFCValidationTest extends TestCase
      */
     protected $lexer;
 
-    protected function setUp() : void
+    protected function setUp(): void
     {
         $this->validator = new RFCValidation();
         $this->lexer = new EmailLexer();
     }
 
-    protected function tearDown() : void
+    protected function tearDown(): void
     {
         $this->validator = null;
     }
@@ -56,7 +58,7 @@ class RFCValidationTest extends TestCase
 
     public static function getValidEmails()
     {
-        return array(
+        return [
             ['â@iana.org'],
             ['fabien@symfony.com'],
             ['example@example.co.uk'],
@@ -77,9 +79,9 @@ class RFCValidationTest extends TestCase
             ['""@iana.org'],
             ['"\""@iana.org'],
             ['müller@möller.de'],
-            ["1500111@профи-инвест.рф"],
+            ['1500111@профи-инвест.рф'],
             [sprintf('example@%s.com', str_repeat('ъ', 40))],
-        );
+        ];
     }
 
     /**
@@ -98,7 +100,7 @@ class RFCValidationTest extends TestCase
             ['example@example', [new TLD()]],
             ['example @invalid.example.com', [new CFWSNearAt()]],
             ['example(examplecomment)@invalid.example.com',[new Comment(), new CFWSNearAt()]],
-            ["\"\t\"@invalid.example.com", [new QuotedString("", '"'), new CFWSWithFWS(),]],
+            ["\"\t\"@invalid.example.com", [new QuotedString('', '"'), new CFWSWithFWS(),]],
             ["\"\r\"@invalid.example.com", [new QuotedString('', '"'), new CFWSWithFWS(),]],
             ['"example"@invalid.example.com', [new QuotedString('', '"')]],
             ['too_long_localpart_too_long_localpart_too_long_localpart_too_long_localpart@invalid.example.com',
@@ -169,7 +171,7 @@ class RFCValidationTest extends TestCase
     public static function getInvalidEmailsWithErrors()
     {
         return [
-            [new InvalidEmail(new NoLocalPart(), "@"), '@example.co.uk'],
+            [new InvalidEmail(new NoLocalPart(), '@'), '@example.co.uk'],
             [new InvalidEmail(new ConsecutiveDot(), '.'), 'example..example@example.co.uk'],
             [new InvalidEmail(new ExpectingATEXT('Invalid token found'), '<'), '<example_example>@example.fr'],
             [new InvalidEmail(new DotAtStart(), '.'), '.example@localhost'],
@@ -179,8 +181,9 @@ class RFCValidationTest extends TestCase
             [
                 new InvalidEmail(
                     new ExpectingATEXT('https://tools.ietf.org/html/rfc5322#section-3.2.4 - quoted string should be a unit'),
-                    '"'),
-                'exa"mple@localhost'
+                    '"'
+                ),
+                'exa"mple@localhost',
             ],
             [new InvalidEmail(new UnOpenedComment(), ')'), 'comment)example@localhost'],
             [new InvalidEmail(new UnOpenedComment(), ')'), 'example(comment))@localhost'],

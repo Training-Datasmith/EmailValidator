@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Egulias\EmailValidator\Tests\EmailValidator\Validation;
 
 use Egulias\EmailValidator\EmailLexer;
@@ -72,7 +74,7 @@ class DNSCheckValidationTest extends TestCase
     public function testInvalidDNS()
     {
         $validation = new DNSCheckValidation();
-        $this->assertFalse($validation->isValid("example@invalid.example.com", new EmailLexer()));
+        $this->assertFalse($validation->isValid('example@invalid.example.com', new EmailLexer()));
     }
 
     /**
@@ -89,8 +91,8 @@ class DNSCheckValidationTest extends TestCase
     public function testDomainAcceptsNoMailError()
     {
         $validation = new DNSCheckValidation();
-        $expectedError = new InvalidEmail(new DomainAcceptsNoMail(), "");
-        $isValidResult = $validation->isValid("nullmx@example.com", new EmailLexer());
+        $expectedError = new InvalidEmail(new DomainAcceptsNoMail(), '');
+        $isValidResult = $validation->isValid('nullmx@example.com', new EmailLexer());
         $this->assertEquals($expectedError, $validation->getError());
         $this->assertFalse($isValidResult);
     }
@@ -100,7 +102,7 @@ class DNSCheckValidationTest extends TestCase
         $this->markTestSkipped('Need to found a domain with AAAA records and no MX that fails later in the validations');
         $validation = new DNSCheckValidation();
         $expectedWarnings = [NoDNSMXRecord::CODE => new NoDNSMXRecord()];
-        $validation->isValid("example@invalid.example.com", new EmailLexer());
+        $validation->isValid('example@invalid.example.com', new EmailLexer());
         $this->assertEquals($expectedWarnings, $validation->getWarnings());
     }
 
@@ -108,7 +110,7 @@ class DNSCheckValidationTest extends TestCase
     {
         $validation = new DNSCheckValidation();
         $expectedError = new InvalidEmail(new NoDNSRecord(), '');
-        $validation->isValid("example@invalid.example.com", new EmailLexer());
+        $validation->isValid('example@invalid.example.com', new EmailLexer());
         $this->assertEquals($expectedError, $validation->getError());
     }
 
@@ -122,8 +124,8 @@ class DNSCheckValidationTest extends TestCase
         // UnableToGetDNSRecord raises on network errors (e.g. timeout) that we can‘t emulate in tests (for sure),
         // but we can simulate with the wrapper helper
 
-        $wrapper = new class extends DNSGetRecordWrapper {
-            public function getRecords(string $host, int $type) : DNSRecords
+        $wrapper = new class () extends DNSGetRecordWrapper {
+            public function getRecords(string $host, int $type): DNSRecords
             {
                 return new DNSRecords([], true);
             }
@@ -138,7 +140,7 @@ class DNSCheckValidationTest extends TestCase
 
     public function testMissingTypeKey()
     {
-        $wrapper = new class extends DNSGetRecordWrapper {
+        $wrapper = new class () extends DNSGetRecordWrapper {
             public function getRecords(string $host, int $type): DNSRecords
             {
                 return new DNSRecords(['host' => 'test']);

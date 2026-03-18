@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Egulias\EmailValidator\Validation;
 
 use Egulias\EmailValidator\EmailLexer;
@@ -13,11 +15,10 @@ use Egulias\EmailValidator\Warning\Warning;
 
 class DNSCheckValidation implements EmailValidation
 {
-
     /**
      * Reserved Top Level DNS Names (https://tools.ietf.org/html/rfc2606#section-2),
      * mDNS and private DNS Namespaces (https://tools.ietf.org/html/rfc6762#appendix-G)
-     * 
+     *
      * @var string[]
      */
     public const RESERVED_DNS_TOP_LEVEL_NAMES = [
@@ -124,7 +125,6 @@ class DNSCheckValidation implements EmailValidation
         return false;
     }
 
-
     /**
      * Validate the DNS records for given host.
      *
@@ -189,7 +189,7 @@ class DNSCheckValidation implements EmailValidation
 
         // "Null MX" record indicates the domain accepts no mail (https://tools.ietf.org/html/rfc7505)
         if (empty($dnsRecord['target']) || $dnsRecord['target'] === '.') {
-            $this->error = new InvalidEmail(new DomainAcceptsNoMail(), "");
+            $this->error = new InvalidEmail(new DomainAcceptsNoMail(), '');
             return false;
         }
 

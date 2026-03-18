@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Egulias\EmailValidator\Warning;
 
 abstract class Warning implements \Stringable
@@ -45,6 +47,6 @@ abstract class Warning implements \Stringable
 
     public function __toString(): string
     {
-        return $this->message() . " rfc: " .  $this->rfcNumber . "internal code: " . static::CODE;
+        return $this->message() . ' rfc: ' .  $this->rfcNumber . 'internal code: ' . static::CODE;
     }
 }
