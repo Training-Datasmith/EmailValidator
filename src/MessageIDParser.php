@@ -1,92 +1,75 @@
 <?php
 
-declare(strict_types=1);
+declare (strict_types=1);
+namespace Egulias\Email_Validator;
 
-namespace Egulias\EmailValidator;
-
-use Egulias\EmailValidator\Parser\IDLeftPart;
-use Egulias\EmailValidator\Parser\IDRightPart;
-use Egulias\EmailValidator\Result\InvalidEmail;
-use Egulias\EmailValidator\Result\Reason\NoLocalPart;
-use Egulias\EmailValidator\Result\Result;
-use Egulias\EmailValidator\Result\ValidEmail;
-use Egulias\EmailValidator\Warning\EmailTooLong;
-
-class MessageIDParser extends Parser
+use Egulias\Email_Validator\Parser\Id_Left_Part;
+use Egulias\Email_Validator\Parser\Id_Right_Part;
+use Egulias\Email_Validator\Result\Invalid_Email;
+use Egulias\Email_Validator\Result\Reason\No_Local_Part;
+use Egulias\Email_Validator\Result\Result;
+use Egulias\Email_Validator\Result\Valid_Email;
+use Egulias\Email_Validator\Warning\Email_Too_Long;
+class Message_Id_Parser extends Parser
 {
     public const EMAILID_MAX_LENGTH = 254;
-
     /**
      * @var string
      */
-    protected $idLeft = '';
-
+    protected $id_left = '';
     /**
      * @var string
      */
-    protected $idRight = '';
-
+    protected $id_right = '';
     public function parse(string $str): Result
     {
         $result = parent::parse($str);
-
-        $this->addLongEmailWarning($this->idLeft, $this->idRight);
-
+        $this->add_long_email_warning($this->id_left, $this->id_right);
         return $result;
     }
-
-    protected function preLeftParsing(): Result
+    protected function pre_left_parsing(): Result
     {
-        if (!$this->hasAtToken()) {
-            return new InvalidEmail(new NoLocalPart(), $this->lexer->current->value);
+        if (!$this->has_at_token()) {
+            return new Invalid_Email(new No_Local_Part(), $this->lexer->current->value);
         }
-        return new ValidEmail();
+        return new Valid_Email();
     }
-
-    protected function parseLeftFromAt(): Result
+    protected function parse_left_from_at(): Result
     {
-        return $this->processIDLeft();
+        return $this->process_id_left();
     }
-
-    protected function parseRightFromAt(): Result
+    protected function parse_right_from_at(): Result
     {
-        return $this->processIDRight();
+        return $this->process_id_right();
     }
-
-    private function processIDLeft(): Result
+    private function process_id_left(): Result
     {
-        $localPartParser = new IDLeftPart($this->lexer);
-        $localPartResult = $localPartParser->parse();
-        $this->idLeft = $localPartParser->localPart();
-        $this->warnings = [...$localPartParser->getWarnings(), ...$this->warnings];
-
-        return $localPartResult;
+        $local_part_parser = new Id_Left_Part($this->lexer);
+        $local_part_result = $local_part_parser->parse();
+        $this->id_left = $local_part_parser->local_part();
+        $this->warnings = [...$local_part_parser->get_warnings(), ...$this->warnings];
+        return $local_part_result;
     }
-
-    private function processIDRight(): Result
+    private function process_id_right(): Result
     {
-        $domainPartParser = new IDRightPart($this->lexer);
-        $domainPartResult = $domainPartParser->parse();
-        $this->idRight = $domainPartParser->domainPart();
-        $this->warnings = [...$domainPartParser->getWarnings(), ...$this->warnings];
-
-        return $domainPartResult;
+        $domain_part_parser = new Id_Right_Part($this->lexer);
+        $domain_part_result = $domain_part_parser->parse();
+        $this->id_right = $domain_part_parser->domain_part();
+        $this->warnings = [...$domain_part_parser->get_warnings(), ...$this->warnings];
+        return $domain_part_result;
     }
-
-    public function getLeftPart(): string
+    public function get_left_part(): string
     {
-        return $this->idLeft;
+        return $this->id_left;
     }
-
-    public function getRightPart(): string
+    public function get_right_part(): string
     {
-        return $this->idRight;
+        return $this->id_right;
     }
-
-    private function addLongEmailWarning(string $localPart, string $parsedDomainPart): void
+    private function add_long_email_warning(string $local_part, string $parsed_domain_part): void
     {
-        if (strlen($localPart . '@' . $parsedDomainPart) > self::EMAILID_MAX_LENGTH) {
-            $this->warnings[EmailTooLong::CODE] = new EmailTooLong();
+        if (strlen($local_part . '@' . $parsed_domain_part) > self::EMAILID_MAX_LENGTH) {
+            $this->warnings[Email_Too_Long::CODE] = new Email_Too_Long();
         }
     }
 }

@@ -1,16 +1,14 @@
 <?php
 
-declare(strict_types=1);
+declare (strict_types=1);
+namespace Egulias\Email_Validator\Result\Reason;
 
-namespace Egulias\EmailValidator\Result\Reason;
-
-class RFCWarnings implements Reason
+class Rfc_Warnings implements Reason
 {
     public function code(): int
     {
         return 997;
     }
-
     public function description(): string
     {
         return 'Warnings found after validating';

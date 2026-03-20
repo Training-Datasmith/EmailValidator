@@ -1,73 +1,58 @@
 <?php
 
-declare(strict_types=1);
+declare (strict_types=1);
+namespace Egulias\Email_Validator;
 
-namespace Egulias\EmailValidator;
-
-use Egulias\EmailValidator\Result\InvalidEmail;
-use Egulias\EmailValidator\Result\Reason\ExpectingATEXT;
-use Egulias\EmailValidator\Result\Result;
-use Egulias\EmailValidator\Result\ValidEmail;
-
+use Egulias\Email_Validator\Result\Invalid_Email;
+use Egulias\Email_Validator\Result\Reason\Expecting_Atext;
+use Egulias\Email_Validator\Result\Result;
+use Egulias\Email_Validator\Result\Valid_Email;
 abstract class Parser
 {
     /**
      * @var Warning\Warning[]
      */
     protected $warnings = [];
-
     /**
      * id-left "@" id-right
      */
-    abstract protected function parseRightFromAt(): Result;
-    abstract protected function parseLeftFromAt(): Result;
-    abstract protected function preLeftParsing(): Result;
-
-    public function __construct(protected \Egulias\EmailValidator\EmailLexer $lexer)
+    abstract protected function parse_right_from_at(): Result;
+    abstract protected function parse_left_from_at(): Result;
+    abstract protected function pre_left_parsing(): Result;
+    public function __construct(protected \Egulias\Email_Validator\Email_Lexer $lexer)
     {
     }
-
     public function parse(string $str): Result
     {
-        $this->lexer->setInput($str);
-
-        if ($this->lexer->hasInvalidTokens()) {
-            return new InvalidEmail(new ExpectingATEXT('Invalid tokens found'), $this->lexer->current->value);
+        $this->lexer->set_input($str);
+        if ($this->lexer->has_invalid_tokens()) {
+            return new Invalid_Email(new Expecting_Atext('Invalid tokens found'), $this->lexer->current->value);
         }
-
-        $preParsingResult = $this->preLeftParsing();
-        if ($preParsingResult->isInvalid()) {
-            return $preParsingResult;
+        $pre_parsing_result = $this->pre_left_parsing();
+        if ($pre_parsing_result->is_invalid()) {
+            return $pre_parsing_result;
         }
-
-        $localPartResult = $this->parseLeftFromAt();
-
-        if ($localPartResult->isInvalid()) {
-            return $localPartResult;
+        $local_part_result = $this->parse_left_from_at();
+        if ($local_part_result->is_invalid()) {
+            return $local_part_result;
         }
-
-        $domainPartResult = $this->parseRightFromAt();
-
-        if ($domainPartResult->isInvalid()) {
-            return $domainPartResult;
+        $domain_part_result = $this->parse_right_from_at();
+        if ($domain_part_result->is_invalid()) {
+            return $domain_part_result;
         }
-
-        return new ValidEmail();
+        return new Valid_Email();
     }
-
     /**
      * @return Warning\Warning[]
      */
-    public function getWarnings(): array
+    public function get_warnings(): array
     {
         return $this->warnings;
     }
-
-    protected function hasAtToken(): bool
+    protected function has_at_token(): bool
     {
-        $this->lexer->moveNext();
-        $this->lexer->moveNext();
-
-        return !$this->lexer->current->isA(EmailLexer::S_AT);
+        $this->lexer->move_next();
+        $this->lexer->move_next();
+        return !$this->lexer->current->is_a(Email_Lexer::S_AT);
     }
 }

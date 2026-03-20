@@ -1,57 +1,47 @@
 <?php
 
-declare(strict_types=1);
+declare (strict_types=1);
+namespace Egulias\Email_Validator;
 
-namespace Egulias\EmailValidator;
-
-use Egulias\EmailValidator\Result\InvalidEmail;
-use Egulias\EmailValidator\Validation\EmailValidation;
-
-class EmailValidator
+use Egulias\Email_Validator\Result\Invalid_Email;
+use Egulias\Email_Validator\Validation\Email_Validation;
+class Email_Validator
 {
-    private readonly \Egulias\EmailValidator\EmailLexer $lexer;
-
+    private readonly \Egulias\Email_Validator\Email_Lexer $lexer;
     /**
      * @var Warning\Warning[]
      */
     private array $warnings = [];
-
-    private ?\Egulias\EmailValidator\Result\InvalidEmail $error = null;
-
+    private ?\Egulias\Email_Validator\Result\Invalid_Email $error = null;
     public function __construct()
     {
-        $this->lexer = new EmailLexer();
+        $this->lexer = new Email_Lexer();
     }
-
     /**
      * @return bool
      */
-    public function isValid(string $email, EmailValidation $emailValidation)
+    public function is_valid(string $email, Email_Validation $email_validation)
     {
-        $isValid = $emailValidation->isValid($email, $this->lexer);
-        $this->warnings = $emailValidation->getWarnings();
-        $this->error = $emailValidation->getError();
-
-        return $isValid;
+        $is_valid = $email_validation->is_valid($email, $this->lexer);
+        $this->warnings = $email_validation->get_warnings();
+        $this->error = $email_validation->get_error();
+        return $is_valid;
     }
-
-    public function hasWarnings(): bool
+    public function has_warnings(): bool
     {
         return !empty($this->warnings);
     }
-
     /**
      * @return array
      */
-    public function getWarnings()
+    public function get_warnings()
     {
         return $this->warnings;
     }
-
     /**
      * @return InvalidEmail|null
      */
-    public function getError()
+    public function get_error()
     {
         return $this->error;
     }

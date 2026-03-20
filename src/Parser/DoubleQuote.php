@@ -1,93 +1,66 @@
 <?php
 
-declare(strict_types=1);
+declare (strict_types=1);
+namespace Egulias\Email_Validator\Parser;
 
-namespace Egulias\EmailValidator\Parser;
-
-use Egulias\EmailValidator\EmailLexer;
-use Egulias\EmailValidator\Result\InvalidEmail;
-use Egulias\EmailValidator\Result\Reason\ExpectingATEXT;
-use Egulias\EmailValidator\Result\Reason\UnclosedQuotedString;
-use Egulias\EmailValidator\Result\Result;
-use Egulias\EmailValidator\Result\ValidEmail;
-use Egulias\EmailValidator\Warning\CFWSWithFWS;
-use Egulias\EmailValidator\Warning\QuotedString;
-
-class DoubleQuote extends PartParser
+use Egulias\Email_Validator\Email_Lexer;
+use Egulias\Email_Validator\Result\Invalid_Email;
+use Egulias\Email_Validator\Result\Reason\Expecting_Atext;
+use Egulias\Email_Validator\Result\Reason\Unclosed_Quoted_String;
+use Egulias\Email_Validator\Result\Result;
+use Egulias\Email_Validator\Result\Valid_Email;
+use Egulias\Email_Validator\Warning\Cfws_With_Fws;
+use Egulias\Email_Validator\Warning\Quoted_String;
+class Double_Quote extends Part_Parser
 {
     public function parse(): Result
     {
-
-        $validQuotedString = $this->checkDQUOTE();
-        if ($validQuotedString->isInvalid()) {
-            return $validQuotedString;
+        $valid_quoted_string = $this->check_dquote();
+        if ($valid_quoted_string->is_invalid()) {
+            return $valid_quoted_string;
         }
-
-        $special = [
-            EmailLexer::S_CR => true,
-            EmailLexer::S_HTAB => true,
-            EmailLexer::S_LF => true,
-        ];
-
-        $invalid = [
-            EmailLexer::C_NUL => true,
-            EmailLexer::S_HTAB => true,
-            EmailLexer::S_CR => true,
-            EmailLexer::S_LF => true,
-        ];
-
-        $setSpecialsWarning = true;
-
-        $this->lexer->moveNext();
-
-        while (!$this->lexer->current->isA(EmailLexer::S_DQUOTE) && !$this->lexer->current->isA(EmailLexer::S_EMPTY)) {
-            if (isset($special[$this->lexer->current->type]) && $setSpecialsWarning) {
-                $this->warnings[CFWSWithFWS::CODE] = new CFWSWithFWS();
-                $setSpecialsWarning = false;
+        $special = [Email_Lexer::S_CR => true, Email_Lexer::S_HTAB => true, Email_Lexer::S_LF => true];
+        $invalid = [Email_Lexer::C_NUL => true, Email_Lexer::S_HTAB => true, Email_Lexer::S_CR => true, Email_Lexer::S_LF => true];
+        $set_specials_warning = true;
+        $this->lexer->move_next();
+        while (!$this->lexer->current->is_a(Email_Lexer::S_DQUOTE) && !$this->lexer->current->is_a(Email_Lexer::S_EMPTY)) {
+            if (isset($special[$this->lexer->current->type]) && $set_specials_warning) {
+                $this->warnings[Cfws_With_Fws::CODE] = new Cfws_With_Fws();
+                $set_specials_warning = false;
             }
-            if ($this->lexer->current->isA(EmailLexer::S_BACKSLASH) && $this->lexer->isNextToken(EmailLexer::S_DQUOTE)) {
-                $this->lexer->moveNext();
+            if ($this->lexer->current->is_a(Email_Lexer::S_BACKSLASH) && $this->lexer->is_next_token(Email_Lexer::S_DQUOTE)) {
+                $this->lexer->move_next();
             }
-
-            $this->lexer->moveNext();
-
+            $this->lexer->move_next();
             if (!$this->escaped() && isset($invalid[$this->lexer->current->type])) {
-                return new InvalidEmail(new ExpectingATEXT('Expecting ATEXT between DQUOTE'), $this->lexer->current->value);
+                return new Invalid_Email(new Expecting_Atext('Expecting ATEXT between DQUOTE'), $this->lexer->current->value);
             }
         }
-
-        $prev = $this->lexer->getPrevious();
-
-        if ($prev->isA(EmailLexer::S_BACKSLASH)) {
-            $validQuotedString = $this->checkDQUOTE();
-            if ($validQuotedString->isInvalid()) {
-                return $validQuotedString;
+        $prev = $this->lexer->get_previous();
+        if ($prev->is_a(Email_Lexer::S_BACKSLASH)) {
+            $valid_quoted_string = $this->check_dquote();
+            if ($valid_quoted_string->is_invalid()) {
+                return $valid_quoted_string;
             }
         }
-
-        if (!$this->lexer->isNextToken(EmailLexer::S_AT) && !$prev->isA(EmailLexer::S_BACKSLASH)) {
-            return new InvalidEmail(new ExpectingATEXT('Expecting ATEXT between DQUOTE'), $this->lexer->current->value);
+        if (!$this->lexer->is_next_token(Email_Lexer::S_AT) && !$prev->is_a(Email_Lexer::S_BACKSLASH)) {
+            return new Invalid_Email(new Expecting_Atext('Expecting ATEXT between DQUOTE'), $this->lexer->current->value);
         }
-
-        return new ValidEmail();
+        return new Valid_Email();
     }
-
-    protected function checkDQUOTE(): Result
+    protected function check_dquote(): Result
     {
-        $previous = $this->lexer->getPrevious();
-
-        if ($this->lexer->isNextToken(EmailLexer::GENERIC) && $previous->isA(EmailLexer::GENERIC)) {
+        $previous = $this->lexer->get_previous();
+        if ($this->lexer->is_next_token(Email_Lexer::GENERIC) && $previous->is_a(Email_Lexer::GENERIC)) {
             $description = 'https://tools.ietf.org/html/rfc5322#section-3.2.4 - quoted string should be a unit';
-            return new InvalidEmail(new ExpectingATEXT($description), $this->lexer->current->value);
+            return new Invalid_Email(new Expecting_Atext($description), $this->lexer->current->value);
         }
-
         try {
-            $this->lexer->find(EmailLexer::S_DQUOTE);
+            $this->lexer->find(Email_Lexer::S_DQUOTE);
         } catch (\Exception) {
-            return new InvalidEmail(new UnclosedQuotedString(), $this->lexer->current->value);
+            return new Invalid_Email(new Unclosed_Quoted_String(), $this->lexer->current->value);
         }
-        $this->warnings[QuotedString::CODE] = new QuotedString($previous->value, $this->lexer->current->value);
-
-        return new ValidEmail();
+        $this->warnings[Quoted_String::CODE] = new Quoted_String($previous->value, $this->lexer->current->value);
+        return new Valid_Email();
     }
 }

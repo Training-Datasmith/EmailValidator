@@ -1,16 +1,14 @@
 <?php
 
-declare(strict_types=1);
+declare (strict_types=1);
+namespace Egulias\Email_Validator\Result\Reason;
 
-namespace Egulias\EmailValidator\Result\Reason;
-
-class ExpectingDomainLiteralClose implements Reason
+class Expecting_Domain_Literal_Close implements Reason
 {
     public function code(): int
     {
         return 137;
     }
-
     public function description(): string
     {
         return "Closing bracket ']' for domain literal not found";

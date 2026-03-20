@@ -1,47 +1,39 @@
 <?php
 
-declare(strict_types=1);
+declare (strict_types=1);
+namespace Egulias\Email_Validator\Validation\Extra;
 
-namespace Egulias\EmailValidator\Validation\Extra;
-
-use Egulias\EmailValidator\EmailLexer;
-use Egulias\EmailValidator\Result\InvalidEmail;
-use Egulias\EmailValidator\Result\SpoofEmail;
-use Egulias\EmailValidator\Validation\EmailValidation;
+use Egulias\Email_Validator\Email_Lexer;
+use Egulias\Email_Validator\Result\Invalid_Email;
+use Egulias\Email_Validator\Result\Spoof_Email;
+use Egulias\Email_Validator\Validation\Email_Validation;
 use Spoofchecker;
-
-class SpoofCheckValidation implements EmailValidation
+class Spoof_Check_Validation implements Email_Validation
 {
     /**
      * @var InvalidEmail|null
      */
-    private ?\Egulias\EmailValidator\Result\SpoofEmail $error = null;
-
+    private ?\Egulias\Email_Validator\Result\Spoof_Email $error = null;
     public function __construct()
     {
         if (!extension_loaded('intl')) {
             throw new \LogicException(sprintf('The %s class requires the Intl extension.', self::class));
         }
     }
-
-    public function isValid(string $email, EmailLexer $emailLexer): bool
+    public function is_valid(string $email, Email_Lexer $email_lexer): bool
     {
         $checker = new Spoofchecker();
-        $checker->setChecks(Spoofchecker::SINGLE_SCRIPT);
-
-        if ($checker->isSuspicious($email)) {
-            $this->error = new SpoofEmail();
+        $checker->set_checks(Spoofchecker::SINGLE_SCRIPT);
+        if ($checker->is_suspicious($email)) {
+            $this->error = new Spoof_Email();
         }
-
         return $this->error === null;
     }
-
-    public function getError(): ?InvalidEmail
+    public function get_error(): ?Invalid_Email
     {
         return $this->error;
     }
-
-    public function getWarnings(): array
+    public function get_warnings(): array
     {
         return [];
     }

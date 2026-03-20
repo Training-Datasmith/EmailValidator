@@ -1,161 +1,118 @@
 <?php
 
-declare(strict_types=1);
+declare (strict_types=1);
+namespace Egulias\Email_Validator\Parser;
 
-namespace Egulias\EmailValidator\Parser;
-
-use Egulias\EmailValidator\EmailLexer;
-use Egulias\EmailValidator\Parser\CommentStrategy\LocalComment;
-use Egulias\EmailValidator\Result\InvalidEmail;
-use Egulias\EmailValidator\Result\Reason\ConsecutiveDot;
-use Egulias\EmailValidator\Result\Reason\DotAtEnd;
-use Egulias\EmailValidator\Result\Reason\DotAtStart;
-use Egulias\EmailValidator\Result\Reason\ExpectingATEXT;
-use Egulias\EmailValidator\Result\Result;
-use Egulias\EmailValidator\Result\ValidEmail;
-use Egulias\EmailValidator\Warning\LocalTooLong;
-
-class LocalPart extends PartParser
+use Egulias\Email_Validator\Email_Lexer;
+use Egulias\Email_Validator\Parser\Comment_Strategy\Local_Comment;
+use Egulias\Email_Validator\Result\Invalid_Email;
+use Egulias\Email_Validator\Result\Reason\Consecutive_Dot;
+use Egulias\Email_Validator\Result\Reason\Dot_At_End;
+use Egulias\Email_Validator\Result\Reason\Dot_At_Start;
+use Egulias\Email_Validator\Result\Reason\Expecting_Atext;
+use Egulias\Email_Validator\Result\Result;
+use Egulias\Email_Validator\Result\Valid_Email;
+use Egulias\Email_Validator\Warning\Local_Too_Long;
+class Local_Part extends Part_Parser
 {
-    public const INVALID_TOKENS = [
-        EmailLexer::S_COMMA => EmailLexer::S_COMMA,
-        EmailLexer::S_CLOSEBRACKET => EmailLexer::S_CLOSEBRACKET,
-        EmailLexer::S_OPENBRACKET => EmailLexer::S_OPENBRACKET,
-        EmailLexer::S_GREATERTHAN => EmailLexer::S_GREATERTHAN,
-        EmailLexer::S_LOWERTHAN => EmailLexer::S_LOWERTHAN,
-        EmailLexer::S_COLON => EmailLexer::S_COLON,
-        EmailLexer::S_SEMICOLON => EmailLexer::S_SEMICOLON,
-        EmailLexer::INVALID => EmailLexer::INVALID,
-    ];
-
-    private string $localPart = '';
-
+    public const INVALID_TOKENS = [Email_Lexer::S_COMMA => Email_Lexer::S_COMMA, Email_Lexer::S_CLOSEBRACKET => Email_Lexer::S_CLOSEBRACKET, Email_Lexer::S_OPENBRACKET => Email_Lexer::S_OPENBRACKET, Email_Lexer::S_GREATERTHAN => Email_Lexer::S_GREATERTHAN, Email_Lexer::S_LOWERTHAN => Email_Lexer::S_LOWERTHAN, Email_Lexer::S_COLON => Email_Lexer::S_COLON, Email_Lexer::S_SEMICOLON => Email_Lexer::S_SEMICOLON, Email_Lexer::INVALID => Email_Lexer::INVALID];
+    private string $local_part = '';
     public function parse(): Result
     {
-        $this->lexer->clearRecorded();
-        $this->lexer->startRecording();
-
-        while (!$this->lexer->current->isA(EmailLexer::S_AT) && !$this->lexer->current->isA(EmailLexer::S_EMPTY)) {
-            if ($this->hasDotAtStart()) {
-                return new InvalidEmail(new DotAtStart(), $this->lexer->current->value);
+        $this->lexer->clear_recorded();
+        $this->lexer->start_recording();
+        while (!$this->lexer->current->is_a(Email_Lexer::S_AT) && !$this->lexer->current->is_a(Email_Lexer::S_EMPTY)) {
+            if ($this->has_dot_at_start()) {
+                return new Invalid_Email(new Dot_At_Start(), $this->lexer->current->value);
             }
-
-            if ($this->lexer->current->isA(EmailLexer::S_DQUOTE)) {
-                $dquoteParsingResult = $this->parseDoubleQuote();
-
+            if ($this->lexer->current->is_a(Email_Lexer::S_DQUOTE)) {
+                $dquote_parsing_result = $this->parse_double_quote();
                 //Invalid double quote parsing
-                if ($dquoteParsingResult->isInvalid()) {
-                    return $dquoteParsingResult;
+                if ($dquote_parsing_result->is_invalid()) {
+                    return $dquote_parsing_result;
                 }
             }
-
-            if (
-                $this->lexer->current->isA(EmailLexer::S_OPENPARENTHESIS) ||
-                $this->lexer->current->isA(EmailLexer::S_CLOSEPARENTHESIS)
-            ) {
-                $commentsResult = $this->parseComments();
-
+            if ($this->lexer->current->is_a(Email_Lexer::S_OPENPARENTHESIS) || $this->lexer->current->is_a(Email_Lexer::S_CLOSEPARENTHESIS)) {
+                $comments_result = $this->parse_comments();
                 //Invalid comment parsing
-                if ($commentsResult->isInvalid()) {
-                    return $commentsResult;
+                if ($comments_result->is_invalid()) {
+                    return $comments_result;
                 }
             }
-
-            if ($this->lexer->current->isA(EmailLexer::S_DOT) && $this->lexer->isNextToken(EmailLexer::S_DOT)) {
-                return new InvalidEmail(new ConsecutiveDot(), $this->lexer->current->value);
+            if ($this->lexer->current->is_a(Email_Lexer::S_DOT) && $this->lexer->is_next_token(Email_Lexer::S_DOT)) {
+                return new Invalid_Email(new Consecutive_Dot(), $this->lexer->current->value);
             }
-
-            if (
-                $this->lexer->current->isA(EmailLexer::S_DOT) &&
-                $this->lexer->isNextToken(EmailLexer::S_AT)
-            ) {
-                return new InvalidEmail(new DotAtEnd(), $this->lexer->current->value);
+            if ($this->lexer->current->is_a(Email_Lexer::S_DOT) && $this->lexer->is_next_token(Email_Lexer::S_AT)) {
+                return new Invalid_Email(new Dot_At_End(), $this->lexer->current->value);
             }
-
-            $resultEscaping = $this->validateEscaping();
-            if ($resultEscaping->isInvalid()) {
-                return $resultEscaping;
+            $result_escaping = $this->validate_escaping();
+            if ($result_escaping->is_invalid()) {
+                return $result_escaping;
             }
-
-            $resultToken = $this->validateTokens(false);
-            if ($resultToken->isInvalid()) {
-                return $resultToken;
+            $result_token = $this->validate_tokens(false);
+            if ($result_token->is_invalid()) {
+                return $result_token;
             }
-
-            $resultFWS = $this->parseLocalFWS();
-            if ($resultFWS->isInvalid()) {
-                return $resultFWS;
+            $result_fws = $this->parse_local_fws();
+            if ($result_fws->is_invalid()) {
+                return $result_fws;
             }
-
-            $this->lexer->moveNext();
+            $this->lexer->move_next();
         }
-
-        $this->lexer->stopRecording();
-        $this->localPart = rtrim($this->lexer->getAccumulatedValues(), '@');
-        if (strlen($this->localPart) > LocalTooLong::LOCAL_PART_LENGTH) {
-            $this->warnings[LocalTooLong::CODE] = new LocalTooLong();
+        $this->lexer->stop_recording();
+        $this->local_part = rtrim($this->lexer->get_accumulated_values(), '@');
+        if (strlen($this->local_part) > Local_Too_Long::LOCAL_PART_LENGTH) {
+            $this->warnings[Local_Too_Long::CODE] = new Local_Too_Long();
         }
-
-        return new ValidEmail();
+        return new Valid_Email();
     }
-
-    protected function validateTokens(bool $hasComments): Result
+    protected function validate_tokens(bool $has_comments): Result
     {
         if (isset(self::INVALID_TOKENS[$this->lexer->current->type])) {
-            return new InvalidEmail(new ExpectingATEXT('Invalid token found'), $this->lexer->current->value);
+            return new Invalid_Email(new Expecting_Atext('Invalid token found'), $this->lexer->current->value);
         }
-        return new ValidEmail();
+        return new Valid_Email();
     }
-
-    public function localPart(): string
+    public function local_part(): string
     {
-        return $this->localPart;
+        return $this->local_part;
     }
-
-    private function parseLocalFWS(): Result
+    private function parse_local_fws(): Result
     {
-        $foldingWS = new FoldingWhiteSpace($this->lexer);
-        $resultFWS = $foldingWS->parse();
-        if ($resultFWS->isValid()) {
-            $this->warnings = [...$this->warnings, ...$foldingWS->getWarnings()];
+        $folding_ws = new Folding_White_Space($this->lexer);
+        $result_fws = $folding_ws->parse();
+        if ($result_fws->is_valid()) {
+            $this->warnings = [...$this->warnings, ...$folding_ws->get_warnings()];
         }
-        return $resultFWS;
+        return $result_fws;
     }
-
-    private function hasDotAtStart(): bool
+    private function has_dot_at_start(): bool
     {
-        return $this->lexer->current->isA(EmailLexer::S_DOT) && $this->lexer->getPrevious()->isA(EmailLexer::S_EMPTY);
+        return $this->lexer->current->is_a(Email_Lexer::S_DOT) && $this->lexer->get_previous()->is_a(Email_Lexer::S_EMPTY);
     }
-
-    private function parseDoubleQuote(): Result
+    private function parse_double_quote(): Result
     {
-        $dquoteParser = new DoubleQuote($this->lexer);
-        $parseAgain = $dquoteParser->parse();
-        $this->warnings = [...$this->warnings, ...$dquoteParser->getWarnings()];
-
-        return $parseAgain;
+        $dquote_parser = new Double_Quote($this->lexer);
+        $parse_again = $dquote_parser->parse();
+        $this->warnings = [...$this->warnings, ...$dquote_parser->get_warnings()];
+        return $parse_again;
     }
-
-    protected function parseComments(): Result
+    protected function parse_comments(): Result
     {
-        $commentParser = new Comment($this->lexer, new LocalComment());
-        $result = $commentParser->parse();
-        $this->warnings = [...$this->warnings, ...$commentParser->getWarnings()];
-
+        $comment_parser = new Comment($this->lexer, new Local_Comment());
+        $result = $comment_parser->parse();
+        $this->warnings = [...$this->warnings, ...$comment_parser->get_warnings()];
         return $result;
     }
-
-    private function validateEscaping(): Result
+    private function validate_escaping(): Result
     {
         //Backslash found
-        if (!$this->lexer->current->isA(EmailLexer::S_BACKSLASH)) {
-            return new ValidEmail();
+        if (!$this->lexer->current->is_a(Email_Lexer::S_BACKSLASH)) {
+            return new Valid_Email();
         }
-
-        if ($this->lexer->isNextToken(EmailLexer::GENERIC)) {
-            return new InvalidEmail(new ExpectingATEXT('Found ATOM after escaping'), $this->lexer->current->value);
+        if ($this->lexer->is_next_token(Email_Lexer::GENERIC)) {
+            return new Invalid_Email(new Expecting_Atext('Found ATOM after escaping'), $this->lexer->current->value);
         }
-
-        return new ValidEmail();
+        return new Valid_Email();
     }
 }

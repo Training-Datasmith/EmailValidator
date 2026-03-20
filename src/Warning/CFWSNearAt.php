@@ -1,13 +1,11 @@
 <?php
 
-declare(strict_types=1);
+declare (strict_types=1);
+namespace Egulias\Email_Validator\Warning;
 
-namespace Egulias\EmailValidator\Warning;
-
-class CFWSNearAt extends Warning
+class Cfws_Near_At extends Warning
 {
     public const CODE = 49;
-
     public function __construct()
     {
         $this->message = 'Deprecated folding white space near @';

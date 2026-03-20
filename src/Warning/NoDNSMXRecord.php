@@ -1,16 +1,14 @@
 <?php
 
-declare(strict_types=1);
+declare (strict_types=1);
+namespace Egulias\Email_Validator\Warning;
 
-namespace Egulias\EmailValidator\Warning;
-
-class NoDNSMXRecord extends Warning
+class No_Dnsmx_Record extends Warning
 {
     public const CODE = 6;
-
     public function __construct()
     {
         $this->message = 'No MX DSN record was found for this email';
-        $this->rfcNumber = 5321;
+        $this->rfc_number = 5321;
     }
 }

@@ -1,10 +1,9 @@
 <?php
 
-declare(strict_types=1);
+declare (strict_types=1);
+namespace Egulias\Email_Validator\Result\Reason;
 
-namespace Egulias\EmailValidator\Result\Reason;
-
-class ExceptionFound implements Reason
+class Exception_Found implements Reason
 {
     public function __construct(private readonly \Exception $exception)
     {
@@ -13,9 +12,8 @@ class ExceptionFound implements Reason
     {
         return 999;
     }
-
     public function description(): string
     {
-        return $this->exception->getMessage();
+        return $this->exception->get_message();
     }
 }

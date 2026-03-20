@@ -1,89 +1,67 @@
 <?php
 
-declare(strict_types=1);
+declare (strict_types=1);
+namespace Egulias\Email_Validator\Parser;
 
-namespace Egulias\EmailValidator\Parser;
-
-use Egulias\EmailValidator\EmailLexer;
-use Egulias\EmailValidator\Result\InvalidEmail;
-use Egulias\EmailValidator\Result\Reason\AtextAfterCFWS;
-use Egulias\EmailValidator\Result\Reason\CRLFAtTheEnd;
-use Egulias\EmailValidator\Result\Reason\CRLFX2;
-use Egulias\EmailValidator\Result\Reason\CRNoLF;
-use Egulias\EmailValidator\Result\Reason\ExpectingCTEXT;
-use Egulias\EmailValidator\Result\Result;
-use Egulias\EmailValidator\Result\ValidEmail;
-use Egulias\EmailValidator\Warning\CFWSNearAt;
-use Egulias\EmailValidator\Warning\CFWSWithFWS;
-
-class FoldingWhiteSpace extends PartParser
+use Egulias\Email_Validator\Email_Lexer;
+use Egulias\Email_Validator\Result\Invalid_Email;
+use Egulias\Email_Validator\Result\Reason\Atext_After_Cfws;
+use Egulias\Email_Validator\Result\Reason\Crlf_At_The_End;
+use Egulias\Email_Validator\Result\Reason\CRLFX2;
+use Egulias\Email_Validator\Result\Reason\Cr_No_Lf;
+use Egulias\Email_Validator\Result\Reason\Expecting_Ctext;
+use Egulias\Email_Validator\Result\Result;
+use Egulias\Email_Validator\Result\Valid_Email;
+use Egulias\Email_Validator\Warning\Cfws_Near_At;
+use Egulias\Email_Validator\Warning\Cfws_With_Fws;
+class Folding_White_Space extends Part_Parser
 {
-    public const FWS_TYPES = [
-        EmailLexer::S_SP,
-        EmailLexer::S_HTAB,
-        EmailLexer::S_CR,
-        EmailLexer::S_LF,
-        EmailLexer::CRLF,
-    ];
-
+    public const FWS_TYPES = [Email_Lexer::S_SP, Email_Lexer::S_HTAB, Email_Lexer::S_CR, Email_Lexer::S_LF, Email_Lexer::CRLF];
     public function parse(): Result
     {
-        if (!$this->isFWS()) {
-            return new ValidEmail();
+        if (!$this->is_fws()) {
+            return new Valid_Email();
         }
-
-        $previous = $this->lexer->getPrevious();
-
-        $resultCRLF = $this->checkCRLFInFWS();
-        if ($resultCRLF->isInvalid()) {
-            return $resultCRLF;
+        $previous = $this->lexer->get_previous();
+        $result_crlf = $this->check_crlf_in_fws();
+        if ($result_crlf->is_invalid()) {
+            return $result_crlf;
         }
-
-        if ($this->lexer->current->isA(EmailLexer::S_CR)) {
-            return new InvalidEmail(new CRNoLF(), $this->lexer->current->value);
+        if ($this->lexer->current->is_a(Email_Lexer::S_CR)) {
+            return new Invalid_Email(new Cr_No_Lf(), $this->lexer->current->value);
         }
-
-        if ($this->lexer->isNextToken(EmailLexer::GENERIC) && !$previous->isA(EmailLexer::S_AT)) {
-            return new InvalidEmail(new AtextAfterCFWS(), $this->lexer->current->value);
+        if ($this->lexer->is_next_token(Email_Lexer::GENERIC) && !$previous->is_a(Email_Lexer::S_AT)) {
+            return new Invalid_Email(new Atext_After_Cfws(), $this->lexer->current->value);
         }
-
-        if ($this->lexer->current->isA(EmailLexer::S_LF) || $this->lexer->current->isA(EmailLexer::C_NUL)) {
-            return new InvalidEmail(new ExpectingCTEXT(), $this->lexer->current->value);
+        if ($this->lexer->current->is_a(Email_Lexer::S_LF) || $this->lexer->current->is_a(Email_Lexer::C_NUL)) {
+            return new Invalid_Email(new Expecting_Ctext(), $this->lexer->current->value);
         }
-
-        if ($this->lexer->isNextToken(EmailLexer::S_AT) || $previous->isA(EmailLexer::S_AT)) {
-            $this->warnings[CFWSNearAt::CODE] = new CFWSNearAt();
+        if ($this->lexer->is_next_token(Email_Lexer::S_AT) || $previous->is_a(Email_Lexer::S_AT)) {
+            $this->warnings[Cfws_Near_At::CODE] = new Cfws_Near_At();
         } else {
-            $this->warnings[CFWSWithFWS::CODE] = new CFWSWithFWS();
+            $this->warnings[Cfws_With_Fws::CODE] = new Cfws_With_Fws();
         }
-
-        return new ValidEmail();
+        return new Valid_Email();
     }
-
-    protected function checkCRLFInFWS(): Result
+    protected function check_crlf_in_fws(): Result
     {
-        if (!$this->lexer->current->isA(EmailLexer::CRLF)) {
-            return new ValidEmail();
+        if (!$this->lexer->current->is_a(Email_Lexer::CRLF)) {
+            return new Valid_Email();
         }
-
-        if (!$this->lexer->isNextTokenAny([EmailLexer::S_SP, EmailLexer::S_HTAB])) {
-            return new InvalidEmail(new CRLFX2(), $this->lexer->current->value);
+        if (!$this->lexer->is_next_token_any([Email_Lexer::S_SP, Email_Lexer::S_HTAB])) {
+            return new Invalid_Email(new CRLFX2(), $this->lexer->current->value);
         }
-
         //this has no coverage. Condition is repeated from above one
-        if (!$this->lexer->isNextTokenAny([EmailLexer::S_SP, EmailLexer::S_HTAB])) {
-            return new InvalidEmail(new CRLFAtTheEnd(), $this->lexer->current->value);
+        if (!$this->lexer->is_next_token_any([Email_Lexer::S_SP, Email_Lexer::S_HTAB])) {
+            return new Invalid_Email(new Crlf_At_The_End(), $this->lexer->current->value);
         }
-
-        return new ValidEmail();
+        return new Valid_Email();
     }
-
-    protected function isFWS(): bool
+    protected function is_fws(): bool
     {
         if ($this->escaped()) {
             return false;
         }
-
         return in_array($this->lexer->current->type, self::FWS_TYPES);
     }
 }

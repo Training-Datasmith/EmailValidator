@@ -1,12 +1,11 @@
 <?php
 
-declare(strict_types=1);
+declare (strict_types=1);
+namespace Egulias\Email_Validator\Result\Reason;
 
-namespace Egulias\EmailValidator\Result\Reason;
-
-abstract class DetailedReason implements Reason
+abstract class Detailed_Reason implements Reason
 {
-    public function __construct(protected string $detailedDescription)
+    public function __construct(protected string $detailed_description)
     {
     }
 }

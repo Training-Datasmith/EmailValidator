@@ -1,16 +1,14 @@
 <?php
 
-declare(strict_types=1);
+declare (strict_types=1);
+namespace Egulias\Email_Validator\Warning;
 
-namespace Egulias\EmailValidator\Warning;
-
-class IPV6BadChar extends Warning
+class Ipv6bad_Char extends Warning
 {
     public const CODE = 74;
-
     public function __construct()
     {
         $this->message = 'Bad char in IPV6 domain literal';
-        $this->rfcNumber = 5322;
+        $this->rfc_number = 5322;
     }
 }

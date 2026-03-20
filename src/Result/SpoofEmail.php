@@ -1,16 +1,14 @@
 <?php
 
-declare(strict_types=1);
+declare (strict_types=1);
+namespace Egulias\Email_Validator\Result;
 
-namespace Egulias\EmailValidator\Result;
-
-use Egulias\EmailValidator\Result\Reason\SpoofEmail as ReasonSpoofEmail;
-
-class SpoofEmail extends InvalidEmail
+use Egulias\Email_Validator\Result\Reason\Spoof_Email as ReasonSpoofEmail;
+class Spoof_Email extends Invalid_Email
 {
     public function __construct()
     {
-        $this->reason = new ReasonSpoofEmail();
+        $this->reason = new Reason_Spoof_Email();
         parent::__construct($this->reason, '');
     }
 }

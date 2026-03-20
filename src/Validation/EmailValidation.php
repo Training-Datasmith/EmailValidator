@@ -1,14 +1,12 @@
 <?php
 
-declare(strict_types=1);
+declare (strict_types=1);
+namespace Egulias\Email_Validator\Validation;
 
-namespace Egulias\EmailValidator\Validation;
-
-use Egulias\EmailValidator\EmailLexer;
-use Egulias\EmailValidator\Result\InvalidEmail;
-use Egulias\EmailValidator\Warning\Warning;
-
-interface EmailValidation
+use Egulias\Email_Validator\Email_Lexer;
+use Egulias\Email_Validator\Result\Invalid_Email;
+use Egulias\Email_Validator\Warning\Warning;
+interface Email_Validation
 {
     /**
      * Returns true if the given email is valid.
@@ -16,17 +14,15 @@ interface EmailValidation
      * @param string     $email      The email you want to validate.
      * @param EmailLexer $emailLexer The email lexer.
      */
-    public function isValid(string $email, EmailLexer $emailLexer): bool;
-
+    public function is_valid(string $email, Email_Lexer $email_lexer): bool;
     /**
      * Returns the validation error.
      */
-    public function getError(): ?InvalidEmail;
-
+    public function get_error(): ?Invalid_Email;
     /**
      * Returns the validation warnings.
      *
      * @return Warning[]
      */
-    public function getWarnings(): array;
+    public function get_warnings(): array;
 }

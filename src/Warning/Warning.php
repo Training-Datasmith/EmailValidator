@@ -1,8 +1,7 @@
 <?php
 
-declare(strict_types=1);
-
-namespace Egulias\EmailValidator\Warning;
+declare (strict_types=1);
+namespace Egulias\Email_Validator\Warning;
 
 abstract class Warning implements \Stringable
 {
@@ -10,17 +9,14 @@ abstract class Warning implements \Stringable
      * @var int CODE
      */
     public const CODE = 0;
-
     /**
      * @var string
      */
     protected $message = '';
-
     /**
      * @var int
      */
-    protected $rfcNumber = 0;
-
+    protected $rfc_number = 0;
     /**
      * @return string
      */
@@ -28,7 +24,6 @@ abstract class Warning implements \Stringable
     {
         return $this->message;
     }
-
     /**
      * @return int
      */
@@ -36,17 +31,15 @@ abstract class Warning implements \Stringable
     {
         return self::CODE;
     }
-
     /**
      * @return int
      */
-    public function RFCNumber()
+    public function rfc_number()
     {
-        return $this->rfcNumber;
+        return $this->rfc_number;
     }
-
     public function __toString(): string
     {
-        return $this->message() . ' rfc: ' .  $this->rfcNumber . 'internal code: ' . static::CODE;
+        return $this->message() . ' rfc: ' . $this->rfc_number . 'internal code: ' . static::CODE;
     }
 }

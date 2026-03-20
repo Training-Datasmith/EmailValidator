@@ -1,16 +1,14 @@
 <?php
 
-declare(strict_types=1);
+declare (strict_types=1);
+namespace Egulias\Email_Validator\Warning;
 
-namespace Egulias\EmailValidator\Warning;
-
-class DomainLiteral extends Warning
+class Domain_Literal extends Warning
 {
     public const CODE = 70;
-
     public function __construct()
     {
         $this->message = 'Domain Literal';
-        $this->rfcNumber = 5322;
+        $this->rfc_number = 5322;
     }
 }

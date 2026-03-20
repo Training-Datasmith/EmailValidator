@@ -1,16 +1,14 @@
 <?php
 
-declare(strict_types=1);
+declare (strict_types=1);
+namespace Egulias\Email_Validator\Warning;
 
-namespace Egulias\EmailValidator\Warning;
-
-class IPV6MaxGroups extends Warning
+class Ipv6max_Groups extends Warning
 {
     public const CODE = 75;
-
     public function __construct()
     {
         $this->message = 'Reached the maximum number of IPV6 groups allowed';
-        $this->rfcNumber = 5321;
+        $this->rfc_number = 5321;
     }
 }

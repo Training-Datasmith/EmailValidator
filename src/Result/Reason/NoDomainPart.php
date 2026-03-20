@@ -1,16 +1,14 @@
 <?php
 
-declare(strict_types=1);
+declare (strict_types=1);
+namespace Egulias\Email_Validator\Result\Reason;
 
-namespace Egulias\EmailValidator\Result\Reason;
-
-class NoDomainPart implements Reason
+class No_Domain_Part implements Reason
 {
     public function code(): int
     {
         return 131;
     }
-
     public function description(): string
     {
         return 'No domain part found';

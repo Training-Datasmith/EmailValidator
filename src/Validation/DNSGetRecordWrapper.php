@@ -1,24 +1,21 @@
 <?php
 
-declare(strict_types=1);
+declare (strict_types=1);
+namespace Egulias\Email_Validator\Validation;
 
-namespace Egulias\EmailValidator\Validation;
-
-class DNSGetRecordWrapper
+class Dns_Get_Record_Wrapper
 {
-    public function getRecords(string $host, int $type): DNSRecords
+    public function get_records(string $host, int $type): Dns_Records
     {
         // A workaround to fix https://bugs.php.net/bug.php?id=73149
-        set_error_handler(
-            static function (int $errorLevel, string $errorMessage): never {
-                throw new \RuntimeException("Unable to get DNS record for the host: $errorMessage");
-            }
-        );
+        set_error_handler(static function (int $error_level, string $error_message): never {
+            throw new \RuntimeException("Unable to get DNS record for the host: {$error_message}");
+        });
         try {
             // Get all MX, A and AAAA DNS records for host
-            return new DNSRecords(dns_get_record($host, $type));
+            return new Dns_Records(dns_get_record($host, $type));
         } catch (\RuntimeException) {
-            return new DNSRecords([], true);
+            return new Dns_Records([], true);
         } finally {
             restore_error_handler();
         }

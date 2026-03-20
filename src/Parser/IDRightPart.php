@@ -1,31 +1,21 @@
 <?php
 
-declare(strict_types=1);
+declare (strict_types=1);
+namespace Egulias\Email_Validator\Parser;
 
-namespace Egulias\EmailValidator\Parser;
-
-use Egulias\EmailValidator\EmailLexer;
-use Egulias\EmailValidator\Result\InvalidEmail;
-use Egulias\EmailValidator\Result\Reason\ExpectingATEXT;
-use Egulias\EmailValidator\Result\Result;
-use Egulias\EmailValidator\Result\ValidEmail;
-
-class IDRightPart extends DomainPart
+use Egulias\Email_Validator\Email_Lexer;
+use Egulias\Email_Validator\Result\Invalid_Email;
+use Egulias\Email_Validator\Result\Reason\Expecting_Atext;
+use Egulias\Email_Validator\Result\Result;
+use Egulias\Email_Validator\Result\Valid_Email;
+class Id_Right_Part extends Domain_Part
 {
-    protected function validateTokens(bool $hasComments): Result
+    protected function validate_tokens(bool $has_comments): Result
     {
-        $invalidDomainTokens = [
-            EmailLexer::S_DQUOTE => true,
-            EmailLexer::S_SQUOTE => true,
-            EmailLexer::S_BACKTICK => true,
-            EmailLexer::S_SEMICOLON => true,
-            EmailLexer::S_GREATERTHAN => true,
-            EmailLexer::S_LOWERTHAN => true,
-        ];
-
-        if (isset($invalidDomainTokens[$this->lexer->current->type])) {
-            return new InvalidEmail(new ExpectingATEXT('Invalid token in domain: ' . $this->lexer->current->value), $this->lexer->current->value);
+        $invalid_domain_tokens = [Email_Lexer::S_DQUOTE => true, Email_Lexer::S_SQUOTE => true, Email_Lexer::S_BACKTICK => true, Email_Lexer::S_SEMICOLON => true, Email_Lexer::S_GREATERTHAN => true, Email_Lexer::S_LOWERTHAN => true];
+        if (isset($invalid_domain_tokens[$this->lexer->current->type])) {
+            return new Invalid_Email(new Expecting_Atext('Invalid token in domain: ' . $this->lexer->current->value), $this->lexer->current->value);
         }
-        return new ValidEmail();
+        return new Valid_Email();
     }
 }

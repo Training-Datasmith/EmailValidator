@@ -1,40 +1,33 @@
 <?php
 
-declare(strict_types=1);
+declare (strict_types=1);
+namespace Egulias\Email_Validator\Validation;
 
-namespace Egulias\EmailValidator\Validation;
-
-use Egulias\EmailValidator\EmailLexer;
-use Egulias\EmailValidator\Result\InvalidEmail;
-use Egulias\EmailValidator\Result\Reason\RFCWarnings;
-
-class NoRFCWarningsValidation extends RFCValidation
+use Egulias\Email_Validator\Email_Lexer;
+use Egulias\Email_Validator\Result\Invalid_Email;
+use Egulias\Email_Validator\Result\Reason\Rfc_Warnings;
+class No_Rfc_Warnings_Validation extends Rfc_Validation
 {
-    private ?\Egulias\EmailValidator\Result\InvalidEmail $error = null;
-
+    private ?\Egulias\Email_Validator\Result\Invalid_Email $error = null;
     /**
      * {@inheritdoc}
      */
-    public function isValid(string $email, EmailLexer $emailLexer): bool
+    public function is_valid(string $email, Email_Lexer $email_lexer): bool
     {
-        if (!parent::isValid($email, $emailLexer)) {
+        if (!parent::is_valid($email, $email_lexer)) {
             return false;
         }
-
-        if (empty($this->getWarnings())) {
+        if (empty($this->get_warnings())) {
             return true;
         }
-
-        $this->error = new InvalidEmail(new RFCWarnings(), '');
-
+        $this->error = new Invalid_Email(new Rfc_Warnings(), '');
         return false;
     }
-
     /**
      * {@inheritdoc}
      */
-    public function getError(): ?InvalidEmail
+    public function get_error(): ?Invalid_Email
     {
-        return $this->error ?: parent::getError();
+        return $this->error ?: parent::get_error();
     }
 }

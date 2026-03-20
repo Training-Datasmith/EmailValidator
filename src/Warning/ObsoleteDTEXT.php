@@ -1,16 +1,14 @@
 <?php
 
-declare(strict_types=1);
+declare (strict_types=1);
+namespace Egulias\Email_Validator\Warning;
 
-namespace Egulias\EmailValidator\Warning;
-
-class ObsoleteDTEXT extends Warning
+class Obsolete_Dtext extends Warning
 {
     public const CODE = 71;
-
     public function __construct()
     {
-        $this->rfcNumber = 5322;
+        $this->rfc_number = 5322;
         $this->message = 'Obsolete DTEXT in domain literal';
     }
 }

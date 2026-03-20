@@ -1,36 +1,30 @@
 <?php
 
-declare(strict_types=1);
+declare (strict_types=1);
+namespace Egulias\Email_Validator\Validation;
 
-namespace Egulias\EmailValidator\Validation;
-
-use Egulias\EmailValidator\EmailLexer;
-use Egulias\EmailValidator\Result\InvalidEmail;
-use Egulias\EmailValidator\Result\MultipleErrors;
-use Egulias\EmailValidator\Validation\Exception\EmptyValidationList;
-use Egulias\EmailValidator\Warning\Warning;
-
-class MultipleValidationWithAnd implements EmailValidation
+use Egulias\Email_Validator\Email_Lexer;
+use Egulias\Email_Validator\Result\Invalid_Email;
+use Egulias\Email_Validator\Result\Multiple_Errors;
+use Egulias\Email_Validator\Validation\Exception\Empty_Validation_List;
+use Egulias\Email_Validator\Warning\Warning;
+class Multiple_Validation_With_And implements Email_Validation
 {
     /**
      * If one of validations fails, the remaining validations will be skipped.
      * This means MultipleErrors will only contain a single error, the first found.
      */
     public const STOP_ON_ERROR = 0;
-
     /**
      * All of validations will be invoked even if one of them got failure.
      * So MultipleErrors will contain all causes.
      */
     public const ALLOW_ALL_ERRORS = 1;
-
     /**
      * @var Warning[]
      */
     private array $warnings = [];
-
-    private ?\Egulias\EmailValidator\Result\MultipleErrors $error = null;
-
+    private ?\Egulias\Email_Validator\Result\Multiple_Errors $error = null;
     /**
      * @param EmailValidation[] $validations The validations.
      * @param int               $mode        The validation mode (one of the constants).
@@ -38,66 +32,58 @@ class MultipleValidationWithAnd implements EmailValidation
     public function __construct(private readonly array $validations, private readonly int $mode = self::ALLOW_ALL_ERRORS)
     {
         if (count($validations) == 0) {
-            throw new EmptyValidationList();
+            throw new Empty_Validation_List();
         }
     }
-
     /**
      * {@inheritdoc}
      */
-    public function isValid(string $email, EmailLexer $emailLexer): bool
+    public function is_valid(string $email, Email_Lexer $email_lexer): bool
     {
         $result = true;
         foreach ($this->validations as $validation) {
-            $emailLexer->reset();
-            $validationResult = $validation->isValid($email, $emailLexer);
-            $result = $result && $validationResult;
-            $this->warnings = [...$this->warnings, ...$validation->getWarnings()];
-            if (!$validationResult) {
-                $this->processError($validation);
+            $email_lexer->reset();
+            $validation_result = $validation->is_valid($email, $email_lexer);
+            $result = $result && $validation_result;
+            $this->warnings = [...$this->warnings, ...$validation->get_warnings()];
+            if (!$validation_result) {
+                $this->process_error($validation);
             }
-
-            if ($this->shouldStop($result)) {
+            if ($this->should_stop($result)) {
                 break;
             }
         }
-
         return $result;
     }
-
-    private function initErrorStorage(): void
+    private function init_error_storage(): void
     {
         if (null === $this->error) {
-            $this->error = new MultipleErrors();
+            $this->error = new Multiple_Errors();
         }
     }
-
-    private function processError(EmailValidation $validation): void
+    private function process_error(Email_Validation $validation): void
     {
-        if (null !== $validation->getError()) {
-            $this->initErrorStorage();
+        if (null !== $validation->get_error()) {
+            $this->init_error_storage();
             /** @psalm-suppress PossiblyNullReference */
-            $this->error->addReason($validation->getError()->reason());
+            $this->error->add_reason($validation->get_error()->reason());
         }
     }
-
-    private function shouldStop(bool $result): bool
+    private function should_stop(bool $result): bool
     {
         return !$result && $this->mode === self::STOP_ON_ERROR;
     }
-
     /**
      * Returns the validation errors.
      */
-    public function getError(): ?InvalidEmail
+    public function get_error(): ?Invalid_Email
     {
         return $this->error;
     }
-
     /**
      * @return Warning[]
      */
-    public function getWarnings(): array
+    public function get_warnings(): array
     {
         return $this->warnings;
     }

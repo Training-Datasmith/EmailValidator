@@ -1,16 +1,14 @@
 <?php
 
-declare(strict_types=1);
+declare (strict_types=1);
+namespace Egulias\Email_Validator\Warning;
 
-namespace Egulias\EmailValidator\Warning;
-
-class IPV6ColonStart extends Warning
+class Ipv6colon_Start extends Warning
 {
     public const CODE = 76;
-
     public function __construct()
     {
         $this->message = ':: found at the start of the domain literal';
-        $this->rfcNumber = 5322;
+        $this->rfc_number = 5322;
     }
 }
